@@ -78,15 +78,18 @@ selected_job_titles_line = st.multiselect(
 )
 
 if selected_job_titles_line:
+    # Pastikan kolom 'date' bertipe datetime
+    df_trend['date'] = pd.to_datetime(df_trend['date'])
+
     # Filter df_trend untuk job title yang dipilih
     filtered_trend = df_trend[df_trend['job_title_short'].isin(selected_job_titles_line)]
 
     # Totalin jumlah per skill dan tanggal dari gabungan job title terpilih
-    total_skill_per_date = filtered_trend.groupby(['date', 'skills']).agg({'count':'sum'}).reset_index()
+    total_skill_per_date = filtered_trend.groupby(['date', 'skills'])['count'].sum().reset_index()
 
     # Ambil top 5 skill berdasarkan total keseluruhan periode
     total_skill_sum = total_skill_per_date.groupby('skills')['count'].sum().reset_index()
-    top_skills_line = total_skill_sum.nlargest(10, 'count')['skills'].tolist()
+    top_skills_line = total_skill_sum.nlargest(5, 'count')['skills'].tolist()
 
     # Filter hanya top 5 skill yang sudah ditentukan
     final_trend = total_skill_per_date[total_skill_per_date['skills'].isin(top_skills_line)]
@@ -94,7 +97,7 @@ if selected_job_titles_line:
     if final_trend.empty:
         st.info("Data tren skill tidak ditemukan untuk pilihan ini.")
     else:
-        line_chart = alt.Chart(final_trend).mark_line().encode(
+        line_chart = alt.Chart(final_trend).mark_line(point=False).encode(
             x=alt.X('date:T', title='Tanggal'),
             y=alt.Y('count:Q', title='Jumlah Lowongan'),
             color=alt.Color('skills:N', title='Skill'),
@@ -106,7 +109,7 @@ if selected_job_titles_line:
         ).properties(
             width=700,
             height=400,
-            title="Tren Permintaan Top 10 Skill Gabungan Job Titles Terpilih"
+            title="Tren Permintaan Top 5 Skill Gabungan Job Titles Terpilih"
         ).interactive()
 
         st.altair_chart(line_chart)
