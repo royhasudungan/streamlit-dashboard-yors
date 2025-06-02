@@ -32,3 +32,35 @@ def create_view_model_top_skills(df_jobs, df_skills, df_skills_job):
 
     df_top10.to_csv('job_title_skill_count.csv', index=False)
     return df_top10
+
+@st.cache_data(show_spinner=False)
+def create_skill_trend_data(df_jobs, df_skills, df_skills_job):
+    """
+    Membuat data tren skill dari waktu ke waktu.
+    Output: CSV dengan kolom [date, job_title_short, skills, count]
+    """
+
+    # Merge skills-job dengan skill dan job untuk dapatkan skill + job title + tanggal
+    df_skills_job = df_skills_job.merge(df_skills, on='skill_id', how='left')
+    df_merged = df_skills_job.merge(
+        df_jobs[['job_id', 'job_title_short', 'job_posted_date']],
+        on='job_id',
+        how='left'
+    )
+
+    # Pastikan kolom tanggal sudah datetime
+    df_merged['job_posted_date'] = pd.to_datetime(df_merged['job_posted_date'], errors='coerce')
+
+    # Buang data tanpa tanggal valid
+    df_merged = df_merged.dropna(subset=['job_posted_date'])
+
+    # Kita group berdasarkan tanggal, job title dan skill
+    # Bisa juga gunakan bulan/tahun untuk granularitas yang lebih rendah, contoh ambil bulan saja:
+    df_merged['date'] = df_merged['job_posted_date'].dt.to_period('M').dt.to_timestamp()
+
+    df_trend = df_merged.groupby(['date', 'job_title_short', 'skills']).size().reset_index(name='count')
+
+    # Simpan ke CSV
+    df_trend.to_csv('skill_trend.csv', index=False)
+
+    return df_trend
