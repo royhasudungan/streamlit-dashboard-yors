@@ -1,29 +1,16 @@
 import streamlit as st
-import pandas as pd
-import gdown
-import os
+from load_data import download_and_load_csv
+from visualize_top_skills import show_top_skills
 
-st.title("Load Large CSV (>100mb) from Google Drive with gdown 🚀")
+st.title("Top Skills Dashboard 🚀")
 
-file_id = '1drExsbrK32VjG5Xh_CAmtZ7jtPs-S0fU'
-url = f'https://drive.google.com/uc?id={file_id}'
+with st.spinner("Loading data..."):
+    dataframes = download_and_load_csv()
 
-output = 'job_postings_fact.csv'
+df_jobs = dataframes['job_postings_fact.csv']
+df_skills = dataframes['skills_dim.csv']
+df_skills_job = dataframes['skills_job_dim.csv']
 
-# Download file cuma sekali, kalau belum ada
-if not os.path.exists(output):
-    with st.spinner("Downloading file..."):
-        gdown.download(url, output, quiet=False)
-else:
-    st.info("File already downloaded.")
+st.success("✅ All data loaded!")
 
-try:
-    df = pd.read_csv(output)
-    st.success("Data loaded successfully!")
-    st.write(df.head())
-
-    st.subheader("Summary Stats")
-    st.write(df.describe())
-
-except Exception as e:
-    st.error(f"Failed to load data: {e}")
+show_top_skills(df_jobs, df_skills, df_skills_job)
