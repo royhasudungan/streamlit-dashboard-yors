@@ -4,8 +4,8 @@ import pandas as pd
 st.title("Load CSV from Google Drive 🚀")
 
 # Google Drive file ID
-file_id = '1drExsbrK32VjG5Xh_CAmtZ7jtPs'
-url = f'https://drive.google.com/uc?id={file_id}'
+file_id = '1drExsbrK32VjG5Xh_CAmtZ7jtPs-S0fU'
+url = f'https://drive.google.com/uc?export=download&id={file_id}'
 # Load data
 try:
     df = pd.read_csv(url)
