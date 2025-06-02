@@ -23,15 +23,29 @@ if not os.path.exists('job_title_skill_count.csv'):
 df_summary = pd.read_csv('job_title_skill_count.csv')
 
 job_titles = df_summary['job_title_short'].unique()
-selected_job_title = st.selectbox("Pilih Job Title Short:", sorted(job_titles))
+selected_job_title = st.selectbox("Pilih Job Title:", sorted(job_titles))
 
 filtered = df_summary[df_summary['job_title_short'] == selected_job_title]
-filtered = filtered.sort_values(by='count', ascending=True)
+# Hitung total job_id untuk selected job_title
+total_jobs = df_jobs[df_jobs['job_title_short'] == selected_job_title]['job_id'].nunique()
 
+# Buat kolom tooltip custom
+filtered = filtered.copy()
+filtered['tooltip_text'] = filtered.apply(
+    lambda row: f"{row['count']} ({row['count']/total_jobs*100:.1f}%) from {total_jobs} data",
+    axis=1
+)
+
+# Buat chart dengan tooltip kustom
 chart = alt.Chart(filtered).mark_bar().encode(
     x='count:Q',
     y=alt.Y('skills:N', sort='-x'),
-    tooltip=['skills', 'count']
-).properties(width=700, height=400, title=f"Top Skills for {selected_job_title}")
+    tooltip=[alt.Tooltip('skills:N', title='Skill'),
+             alt.Tooltip('tooltip_text:N', title='Count (%)')]
+).properties(
+    width=700,
+    height=400,
+    title=f"Top Skills for {selected_job_title}"
+)
 
 st.altair_chart(chart)
