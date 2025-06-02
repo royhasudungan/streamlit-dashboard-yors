@@ -64,7 +64,8 @@ elif selected_job_titles:
 else:
     st.info("Pilih minimal satu job title untuk melihat bar chart.")
 
-# --- LINE CHART: Skill Trend (total across job titles) ---
+
+
 # --- LINE CHART: Skill Trend by Job Title ---
 st.markdown("---")
 st.header("Skill Demand Trend per Job Title")
@@ -77,37 +78,35 @@ selected_job_titles_line = st.multiselect(
 )
 
 if selected_job_titles_line:
-    # Filter top skills dari df_summary untuk job_title terpilih (ambil top 5 skill total)
-    filtered_for_top = df_summary[df_summary['job_title_short'].isin(selected_job_titles_line)]
-    total_per_skill = filtered_for_top.groupby('skills')['count'].sum().reset_index()
-    top_skills_line = total_per_skill.nlargest(5, 'count')['skills'].tolist()
+    # Filter df_trend untuk job title yang dipilih
+    filtered_trend = df_trend[df_trend['job_title_short'].isin(selected_job_titles_line)]
 
-    # Filter df_trend untuk job title yang dipilih dan skill top 5 tersebut
-    filtered_trend = df_trend[
-        (df_trend['job_title_short'].isin(selected_job_titles_line)) &
-        (df_trend['skills'].isin(top_skills_line))
-    ]
+    # Totalin jumlah per skill dan tanggal dari gabungan job title terpilih
+    total_skill_per_date = filtered_trend.groupby(['date', 'skills']).agg({'count':'sum'}).reset_index()
 
-    if filtered_trend.empty:
+    # Ambil top 5 skill berdasarkan total keseluruhan periode
+    total_skill_sum = total_skill_per_date.groupby('skills')['count'].sum().reset_index()
+    top_skills_line = total_skill_sum.nlargest(10, 'count')['skills'].tolist()
+
+    # Filter hanya top 5 skill yang sudah ditentukan
+    final_trend = total_skill_per_date[total_skill_per_date['skills'].isin(top_skills_line)]
+
+    if final_trend.empty:
         st.info("Data tren skill tidak ditemukan untuk pilihan ini.")
     else:
-        line_chart = alt.Chart(filtered_trend).mark_line().encode(
-            x='date:T',
-            y='count:Q',
-            color='skills:N',
-            strokeDash='job_title_short:N',
+        line_chart = alt.Chart(final_trend).mark_line().encode(
+            x=alt.X('date:T', title='Tanggal'),
+            y=alt.Y('count:Q', title='Jumlah Lowongan'),
+            color=alt.Color('skills:N', title='Skill'),
             tooltip=[
                 alt.Tooltip('date:T', title='Tanggal'),
                 alt.Tooltip('skills:N', title='Skill'),
-                alt.Tooltip('job_title_short:N', title='Job Title'),
                 alt.Tooltip('count:Q', title='Jumlah Lowongan')
             ]
         ).properties(
             width=700,
             height=400,
-            title="Tren Permintaan Skill (Top 5) per Job Title"
+            title="Tren Permintaan Top 10 Skill Gabungan Job Titles Terpilih"
         ).interactive()
 
         st.altair_chart(line_chart)
-else:
-    st.info("Pilih minimal satu job title untuk melihat tren skill.")
