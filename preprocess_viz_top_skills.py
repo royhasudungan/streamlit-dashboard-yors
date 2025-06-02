@@ -36,7 +36,11 @@ def create_view_model_top_skills(df_jobs, df_skills, df_skills_job):
         .reset_index(name='count')
     )
 
+    # Ambil top 10 skill per job_title_short
+    df_top10 = df_summary.sort_values(['job_title_short', 'count'], ascending=[True, False]) \
+                        .groupby('job_title_short').head(10)
+
     # Simpan ke CSV
-    df_summary.to_csv('job_title_skill_count.csv', index=False)
-    return df_summary
+    df_top10.to_csv('job_title_skill_count.csv', index=False)
+    return df_top10
 
