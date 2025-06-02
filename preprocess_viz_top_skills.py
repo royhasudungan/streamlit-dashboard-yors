@@ -21,3 +21,22 @@ def preprocess_data(df_jobs, df_skills, df_skills_job):
 
     return df_jobs, df_skills, df_skills_job
 
+def create_view_model_top_skills(df_jobs, df_skills, df_skills_job):
+    # Merge skills_job_dim dengan skills_dim untuk dapat nama skill
+    df_skills_job = df_skills_job.merge(df_skills, on='skill_id', how='left')
+
+    # Merge df_jobs dengan skills_job_dim untuk dapat job_title_short + skill
+    df_merged = df_skills_job.merge(df_jobs[['job_id', 'job_title_short']], on='job_id', how='left')
+
+    # Hitung frekuensi skill per job_title_short
+    df_summary = (
+        df_merged
+        .groupby(['job_title_short', 'skills'])
+        .size()
+        .reset_index(name='count')
+    )
+
+    # Simpan ke CSV
+    df_summary.to_csv('job_title_skill_count.csv', index=False)
+    return df_summary
+
