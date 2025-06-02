@@ -40,5 +40,5 @@ pip install --upgrade pip
 ### Jika error import belum resolved
 - Tekan Cmd + Shift + P (Mac) atau Ctrl + Shift + P (Windows/Linux) untuk buka Command Palette.
 - Ketik Python: Select Interpreter
-- pilih yang path-nya venv : biasanya <directory>/venv/bin/python
+- pilih yang path-nya venv : biasanya {directory lokal}/venv/bin/python
 
