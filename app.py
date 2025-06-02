@@ -58,7 +58,7 @@ elif selected_job_titles:
             alt.Tooltip('job_title_short:N', title='Job Title'),
             alt.Tooltip('tooltip_text:N', title='Detail')
         ]
-    ).properties(width=700, height=400, title="Top 10 Skills untuk Job Titles Terpilih").interactive()
+    ).properties(width=700, height=400, title="Top 10 Skills untuk Job Titles Terpilih")
 
     st.altair_chart(bar_chart)
 else:
