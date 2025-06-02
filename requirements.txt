@@ -1,3 +1,4 @@
 streamlit
 pandas
 gdown #download file besar dari drive
+altair

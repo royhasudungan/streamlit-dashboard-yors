@@ -1,16 +1,29 @@
 import streamlit as st
-from load_data import download_and_load_csv
-from visualize_top_skills import show_top_skills
+import pandas as pd
+import altair as alt
 
-st.title("Top Skills Dashboard 🚀")
+st.title("Top Skills by Job Title (Horizontal Bar Chart)")
 
-with st.spinner("Loading data..."):
-    dataframes = download_and_load_csv()
+# Contoh load summary data
+df_summary = pd.read_csv('job_title_skill_count.csv')
 
-df_jobs = dataframes['job_postings_fact.csv']
-df_skills = dataframes['skills_dim.csv']
-df_skills_job = dataframes['skills_job_dim.csv']
+job_titles = df_summary['job_title_short'].unique()
+selected_job_title = st.selectbox("Pilih Job Title Short:", sorted(job_titles))
 
-st.success("✅ All data loaded!")
+filtered = df_summary[df_summary['job_title_short'] == selected_job_title]
 
-show_top_skills(df_jobs, df_skills, df_skills_job)
+# Sort descending by count
+filtered = filtered.sort_values(by='count', ascending=True)  # ascending=True biar bar dari bawah ke atas
+
+# Buat chart horizontal dengan Altair
+chart = alt.Chart(filtered).mark_bar().encode(
+    x='count:Q',
+    y=alt.Y('skills:N', sort='-x'),  # sort descending berdasarkan count
+    tooltip=['skills', 'count']
+).properties(
+    width=700,
+    height=400,
+    title=f"Top Skills for {selected_job_title}"
+)
+
+st.altair_chart(chart)
