@@ -6,6 +6,8 @@ from preprocess_viz_top_skills import preprocess_data, create_view_model_top_ski
 from load_data import download_and_load_csv
 from streamlit_option_menu import option_menu
 import pydeck as pdk
+import plotly.express as px
+import plotly.graph_objects as g
 
 st.markdown(
     """
