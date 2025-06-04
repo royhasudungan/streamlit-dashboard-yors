@@ -111,6 +111,7 @@ elif selected == "🛠️ Top Skills":
 
     #job title short
     filtered = df_top10_skills.copy()
+    st.dataframe(filtered)
     job_titles = ["Select All"] + sorted(filtered['job_title_short'].unique())
 
     selected_job_title = st.selectbox(
