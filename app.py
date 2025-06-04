@@ -35,7 +35,7 @@ div[data-testid="stSelectbox"] > div {
 with st.spinner("Loading data..."):
     dataframes = download_and_load_csv()
 
-df_jobs = dataframes['job_postings_fact.csv']
+job_df = dataframes['job_postings_fact.csv']
 df_skills = dataframes['skills_dim.csv']
 df_skills_job = dataframes['skills_job_dim.csv']
 
@@ -49,8 +49,11 @@ if not os.path.exists('skill_trend.csv'):
     with st.spinner("Creating skill trend file..."):
         create_skill_trend_data(df_jobs, df_skills, df_skills_job)
 
-df_summary = pd.read_csv('job_title_skill_count.csv')
-df_trend = pd.read_csv('skill_trend.csv')
+df_jobs_clean, df_skills_clean, df_skills_job_clean = preprocess_data(job_df, df_skills, df_skills_job)
+df_top10_skills = create_view_model_top_skills(df_jobs_clean, df_skills_clean, df_skills_job_clean)
+
+
+df_top10_skills = pd.read_csv('job_title_skill_count.csv')
 
 # =========================================== SIDEBAR =======================================================
 with st.sidebar:
@@ -95,43 +98,6 @@ elif selected == "💰 Salary":
 elif selected == "🛠️ Top Skills":
     st.header("🛠️ Top Skills")
 
-    # --- BAR CHART: Top Skills by Job Title ---
-    job_titles = sorted(df_summary['job_title_short'].unique())
-    selected_job_titles = st.multiselect("Pilih maksimal 3 Job Title (Bar Chart):", job_titles)
-
-    if len(selected_job_titles) > 3:
-        st.warning("⚠️ Maksimal 3 job title boleh dipilih. Tolong kurangi pilihanmu.")
-    elif selected_job_titles:
-        filtered = df_summary[df_summary['job_title_short'].isin(selected_job_titles)]
-        total_per_skill = filtered.groupby('skills')['count'].sum().reset_index()
-        top_skills = total_per_skill.nlargest(10, 'count')['skills'].tolist()
-        filtered_top = filtered[filtered['skills'].isin(top_skills)]
-
-        job_title_totals = {jt: df_jobs[df_jobs['job_title_short'] == jt]['job_id'].nunique() for jt in selected_job_titles}
-
-        def make_tooltip(row):
-            total_jobs = job_title_totals.get(row['job_title_short'], 1)
-            percent = row['count'] / total_jobs * 100 if total_jobs > 0 else 0
-            return f"{row['count']} ({percent:.1f}%) dari {total_jobs} data"
-
-        filtered_top = filtered_top.copy()
-        filtered_top['tooltip_text'] = filtered_top.apply(make_tooltip, axis=1)
-
-        bar_chart = alt.Chart(filtered_top).mark_bar().encode(
-            x='count:Q',
-            y=alt.Y('skills:N', sort='-x'),
-            color=alt.Color('job_title_short:N', legend=alt.Legend(title="Job Title")),
-            tooltip=[
-                alt.Tooltip('skills:N', title='Skill'),
-                alt.Tooltip('job_title_short:N', title='Job Title'),
-                alt.Tooltip('tooltip_text:N', title='Detail')
-            ]
-        ).properties(width=700, height=400, title="Top 10 Skills untuk Job Titles Terpilih")
-
-        st.altair_chart(bar_chart)
-    else:
-        st.info("Pilih minimal satu job title untuk melihat bar chart.")
-
 
 
     # Tambahkan visualisasi skills di sini
@@ -151,7 +117,8 @@ elif selected == "🛠️ Top Skills":
     """, unsafe_allow_html=True)
 
     #job title short
-    job_titles = ["Select All"] + sorted(job_df['job_title_short'].unique())
+    filtered = df_top10_skills.copy()
+    job_titles = ["Select All"] + sorted(filtered['job_title_short'].unique())
 
     selected_job_title = st.selectbox(
         "Job Title :",
@@ -191,7 +158,6 @@ elif selected == "🛠️ Top Skills":
 
 
     # Filter data
-    filtered = df_top10_skills.copy()
     if selected_job_title != "Select All":
         filtered = filtered[filtered['job_title_short'] == selected_job_title]
 
