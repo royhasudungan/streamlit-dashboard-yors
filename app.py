@@ -39,18 +39,11 @@ job_df = dataframes['job_postings_fact.csv']
 df_skills = dataframes['skills_dim.csv']
 df_skills_job = dataframes['skills_job_dim.csv']
 
-df_jobs, df_skills, df_skills_job = preprocess_data(df_jobs, df_skills, df_skills_job)
+df_jobs_clean, df_skills_clean, df_skills_job_clean = preprocess_data(job_df, df_skills, df_skills_job)
 
 if not os.path.exists('job_title_skill_count.csv'):
     with st.spinner("Creating summary file..."):
-        create_view_model_top_skills(df_jobs, df_skills, df_skills_job)
-
-if not os.path.exists('skill_trend.csv'):
-    with st.spinner("Creating skill trend file..."):
-        create_skill_trend_data(df_jobs, df_skills, df_skills_job)
-
-df_jobs_clean, df_skills_clean, df_skills_job_clean = preprocess_data(job_df, df_skills, df_skills_job)
-df_top10_skills = create_view_model_top_skills(df_jobs_clean, df_skills_clean, df_skills_job_clean)
+        create_view_model_top_skills(df_jobs_clean, df_skills_clean, df_skills_job_clean)
 
 
 df_top10_skills = pd.read_csv('job_title_skill_count.csv')
