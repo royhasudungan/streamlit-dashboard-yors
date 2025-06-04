@@ -27,6 +27,42 @@ if not os.path.exists('skill_trend.csv'):
 df_summary = pd.read_csv('job_title_skill_count.csv')
 df_trend = pd.read_csv('skill_trend.csv')
 
+# =========================================== SIDEBAR =======================================================
+with st.sidebar:
+    st.markdown("<h2 style='color:white; font-weight:bold;'> 💼  Data IT</h2>", unsafe_allow_html=True)
+    selected = option_menu(
+        menu_title = "",
+        options=["🏠 Introduction", "💰 Salary", "🛠️ Top Skills", "📍 Location"],
+        default_index=0,
+        styles={
+            "container": {
+                "background-color": "transparent",
+            },
+            "icon": {
+                "color": "transparent",
+                "font-size": "20px"
+            },
+            "nav-link": {
+                "font-size": "16px",
+                "text-align": "left",
+                "margin": "0.3rem 0",
+                "color": "white",
+                "border-radius": "8px",
+            },
+            "nav-link-hover": {
+                "background-color": "rgba(255, 255, 255, 0.2)",
+                "color": "white",
+                "font-weight": "bold",
+            },
+            "nav-link-selected": {
+                "background-color": "rgba(255, 255, 255, 0.2)",
+                "color": "white",
+                "font-weight": "bold",
+            }
+        }
+    )
+# =========================================== SIDEBAR =======================================================
+
 # --- BAR CHART: Top Skills by Job Title ---
 job_titles = sorted(df_summary['job_title_short'].unique())
 selected_job_titles = st.multiselect("Pilih maksimal 3 Job Title (Bar Chart):", job_titles)
