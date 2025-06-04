@@ -2,4 +2,4 @@ streamlit
 streamlit_option_menu
 pandas
 gdown #download file besar dari drive
-altair
+plotly
