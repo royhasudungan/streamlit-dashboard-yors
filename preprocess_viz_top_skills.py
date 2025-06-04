@@ -28,7 +28,7 @@ def create_view_model_top_skills(df_jobs, df_skills, df_skills_job):
     df_summary = df_merged.groupby(['job_title_short', 'skills', 'job_title', 'type']).size().reset_index(name='count')
 
     df_summary = df_merged.groupby(['job_title_short', 'skills']).size().reset_index(name='count')
-    df_top10 = df_summary.sort_values(['job_title_short', 'count'], ascending=[True, False]).groupby('job_title_short').head(20)
+    df_top10 = df_summary.sort_values(['job_title_short', 'count', 'job_title'], ascending=[True, False]).groupby('job_title_short').head(20)
 
 
     df_top10.to_csv('job_title_skill_count.csv', index=False)
