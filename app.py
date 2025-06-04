@@ -6,7 +6,7 @@ from preprocess_viz_top_skills import preprocess_data, create_view_model_top_ski
 from load_data import download_and_load_csv
 from streamlit_option_menu import option_menu
 
-t.markdown(
+st.markdown(
     """
     <style>
     .stApp {
