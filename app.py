@@ -7,7 +7,7 @@ from load_data import download_and_load_csv
 from streamlit_option_menu import option_menu
 import pydeck as pdk
 import plotly.express as px
-import plotly.graph_objects as g
+import plotly.graph_objects as go
 
 st.markdown(
     """
