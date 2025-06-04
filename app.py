@@ -6,6 +6,31 @@ from preprocess_viz_top_skills import preprocess_data, create_view_model_top_ski
 from load_data import download_and_load_csv
 from streamlit_option_menu import option_menu
 
+t.markdown(
+    """
+    <style>
+    .stApp {
+        background: linear-gradient(135deg, #152a4f 0%, #161B22 50%, #0c172d 100%);
+        color: #E6EDF3;
+        font-family: sans-serif !important
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+
+
+# Custom CSS
+st.markdown("""
+<style>
+div[data-testid="stSelectbox"] > div {
+    width: 300px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.title("Top Skills by Job Title")
 
 with st.spinner("Loading data..."):
