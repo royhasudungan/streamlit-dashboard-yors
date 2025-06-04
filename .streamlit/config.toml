@@ -1,0 +1,13 @@
+#[theme]
+#primaryColor = "#FF6B2B"
+#backgroundColor = "#861214"
+#secondaryBackgroundColor = "#265730"
+#textColor = "#FAFAFA"
+#font = "sans serif"
+
+[theme]
+primaryColor = "#0d2961" #Biru soft ala GitHub dark theme
+backgroundColor = "#21334d" # Dark navy, enak di mata
+secondaryBackgroundColor = "#161B22"  # Sedikit lebih terang buat panel/komponen
+textColor = "#E6EDF3"  # Soft white, bukan terlalu terang biar ga silau
+font = "sans serif"
