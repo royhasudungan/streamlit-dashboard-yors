@@ -45,7 +45,10 @@ df_skills_job = dataframes['skills_job_dim.csv']
 
 if not os.path.exists('job_title_skill_count.csv'):
     with st.spinner("Creating summary file..."):
-        create_view_model_top_skills(job_df, df_skills, df_skills_job)
+        try:
+            df_top10 = create_view_model_top_skills(job_df, df_skills, df_skills_job)
+        except Exception as e:
+            st.error(f"Failed to generate view model: {e}")
 
 
 df_top10_skills = pd.read_csv('job_title_skill_count.csv')
