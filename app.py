@@ -5,6 +5,7 @@ import altair as alt
 from preprocess_viz_top_skills import preprocess_data, create_view_model_top_skills, create_skill_trend_data
 from load_data import download_and_load_csv
 from streamlit_option_menu import option_menu
+import pydeck as pdk
 
 st.markdown(
     """
