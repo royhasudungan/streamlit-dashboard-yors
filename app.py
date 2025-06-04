@@ -6,6 +6,8 @@ from load_data import download_and_load_csv
 from preprocess_viz_top_skills import create_view_model_top_skills_sql
 from streamlit_option_menu import option_menu
 import sqlite3
+import plotly.express as px
+import numpy as np
 
 st.markdown(
     """
