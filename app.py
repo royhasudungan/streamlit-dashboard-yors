@@ -134,52 +134,177 @@ elif selected == "🛠️ Top Skills":
 
 
 
-    # --- LINE CHART: Skill Trend by Job Title ---
-    st.markdown("---")
-    st.header("Skill Demand Trend per Job Title")
+    # Tambahkan visualisasi skills di sini
+    def format_k(n):
+        return f"{n / 1_000:.3f}K" if n >= 1_000 else str(n)
+    
+    st.markdown("""
+        <style>
+        div[data-baseweb="select"] > div {
+            font-size: 20px;  /* ukuran teks dropdown */
+        }
+        label {
+            font-size: 22px;  /* ukuran label 'Job Title :' */
+            font-weight: bold;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-    # Input job titles for line chart (no max limit)
-    selected_job_titles_line = st.multiselect(
-        "Pilih Job Title (Line Chart):",
-        job_titles,
-        key="line_chart_job_titles"
+    #job title short
+    job_titles = ["Select All"] + sorted(job_df['job_title_short'].unique())
+
+    selected_job_title = st.selectbox(
+        "Job Title :",
+        options=job_titles,
+        key='job_title1',
+        index=0
     )
 
-    if selected_job_titles_line:
-        # Pastikan kolom 'date' bertipe datetime
-        df_trend['date'] = pd.to_datetime(df_trend['date'])
-
-        # Filter df_trend untuk job title yang dipilih
-        filtered_trend = df_trend[df_trend['job_title_short'].isin(selected_job_titles_line)]
-
-        # Totalin jumlah per skill dan tanggal dari gabungan job title terpilih
-        total_skill_per_date = filtered_trend.groupby(['date', 'skills'])['count'].sum().reset_index()
-
-        # Ambil top 5 skill berdasarkan total keseluruhan periode
-        total_skill_sum = total_skill_per_date.groupby('skills')['count'].sum().reset_index()
-        top_skills_line = total_skill_sum.nlargest(5, 'count')['skills'].tolist()
-
-        # Filter hanya top 5 skill yang sudah ditentukan
-        final_trend = total_skill_per_date[total_skill_per_date['skills'].isin(top_skills_line)]
-
-        if final_trend.empty:
-            st.info("Data tren skill tidak ditemukan untuk pilihan ini.")
+    # type skills
+    skill_type = ["All", "programming","databases", "webframeworks", "analyst_tools", "cloud", "os","sync","async", "other"]
+    def format_label(option):
+        if option == "databases":
+            return "Databases"
+        elif option == "analyst_tools":
+            return "Tools"
+        elif option == "programming":
+            return "Languages"
+        elif option == "webframeworks":
+            return "Frameworks"
+        elif option == "cloud":
+            return "Cloud"
+        elif option == "os":
+            return "OS"
+        elif option == "other":
+            return "Other"
         else:
-            line_chart = alt.Chart(final_trend).mark_line(point=False).encode(
-                x=alt.X('date:T', title='Tanggal'),
-                y=alt.Y('count:Q', title='Jumlah Lowongan'),
-                color=alt.Color('skills:N', title='Skill'),
-                tooltip=[
-                    alt.Tooltip('date:T', title='Tanggal'),
-                    alt.Tooltip('skills:N', title='Skill'),
-                    alt.Tooltip('count:Q', title='Jumlah Lowongan')
-                ]
-            ).properties(
-                width=700,
-                height=400,
-                title="Tren Permintaan Top 5 Skill Gabungan Job Titles Terpilih"
-            ).interactive()
+            return option
+        
 
-            st.altair_chart(line_chart)
+    selected_type_skill = st.radio(
+        "Skills :",
+        options=skill_type,
+        index=0,
+        format_func=format_label,
+        horizontal=True
+    )
+
+
+    # Filter data
+    filtered = df_top10_skills.copy()
+    if selected_job_title != "Select All":
+        filtered = filtered[filtered['job_title_short'] == selected_job_title]
+
+    if selected_type_skill != "All":
+        filtered = filtered[filtered['type'] == selected_type_skill]
+
+
+    # Total job postings (unik job_id)
+    total_jobs = filtered['job_title'].nunique()
+
+    # Hitung berapa job unik per skill
+    skill_job_counts = filtered.groupby('skills')['job_title'].nunique()
+
+    # Ambil top 20 skills berdasarkan jumlah job_id (bukan count rows)
+    top10_skills = skill_job_counts.nlargest(20).index.dropna().tolist()
+
+    # Hitung persentase per skill per total job_id
+    percent_per_skill = (skill_job_counts[top10_skills] / total_jobs * 100).round(2)
+    threshold = 0.05
+    percent_per_skill = percent_per_skill[percent_per_skill >= threshold]
+
+    # Urutkan skill berdasarkan persentase (atau tetap pakai original order, sesuai preferensi)
+    skill_order = percent_per_skill.sort_values().index.tolist()
+        
+    colorscale = px.colors.sequential.Tealgrn[::-1]
+    max_val = max(percent_per_skill[skill_order])
+    xaxis_max = max_val + 5 if max_val + 5 <= 100 else 100
+
+    bar_count = len(skill_order)
+    fig_height = 700
+    bar_slot = fig_height / bar_count
+    font_size = 25
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(
+        y=skill_order,
+        x=percent_per_skill[skill_order],
+        orientation='h',
+        marker=dict(
+            color=percent_per_skill[skill_order],
+            colorscale=colorscale,
+            line=dict(color='rgba(0,0,0,0)', width=2),
+        ),
+        hovertemplate=f"<b>%{{y}}</b><br>📊jobfair requires %{{x:.1f}}% <extra></extra>"
+    ))
+
+    annotations = []
+    for i, skill in enumerate(skill_order):
+        val = percent_per_skill[skill]
+        # Text skill di kiri
+        annotations.append(dict(
+            x=0,
+            y=skill,
+            xanchor='right',
+            yanchor='middle',
+            text=skill,
+            font=dict(color='white', size=font_size),
+            showarrow=False,
+            xshift=-10
+        ))
+        # Persentase di kanan
+        annotations.append(dict(
+            x=val,
+            y=skill,
+            xanchor='left',
+            yanchor='middle',
+            text=f"{val:.1f}%",
+            font=dict(color='white', size=font_size),
+            showarrow=False,
+            xshift=10
+        ))
+
+    bar_height = 37
+    fig_height = max(300, bar_height * bar_count)
+    fig.update_layout(
+        annotations=annotations,
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='white'),
+        xaxis=dict(
+            visible=False,
+            range=[0, xaxis_max]
+        ),
+        yaxis=dict(
+            visible=False,
+            categoryorder='total ascending'
+        ),
+        margin=dict(l=150, r=40, t=60, b=40),
+        newselection_line=dict(
+            color='white',
+            dash='solid'
+        ),
+        hovermode='closest',
+        hoverlabel=dict(
+            bgcolor='#16213e',
+            bordercolor='white',
+            font=dict(color='white', size=0.75*font_size),
+        ),
+        hoverdistance=40,
+        bargap=0.3,
+        height=fig_height,
+    )
+
+
+    st.plotly_chart(fig, use_container_width=True, config={
+        'displayModeBar': True,
+        'modeBarButtonsToRemove': [
+            'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
+            'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian',
+            'toggleSpikelines', 'toImage'
+        ],
+        'displaylogo': False
+    })
 elif selected == "📍 Location":
     st.header("🌍 Job Openings by Country")
