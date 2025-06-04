@@ -45,7 +45,7 @@ df_skills_job = dataframes['skills_job_dim.csv']
 
 if not os.path.exists('job_title_skill_count.csv'):
     with st.spinner("Creating summary file..."):
-        create_view_model_top_skill(job_df, df_skills, df_skills_job)
+        create_view_model_top_skills(job_df, df_skills, df_skills_job)
 
 
 df_top10_skills = pd.read_csv('job_title_skill_count.csv')
