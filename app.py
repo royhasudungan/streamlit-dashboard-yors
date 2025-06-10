@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from load_data import download_and_load_parquet
-from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary
+from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary, initialize_database
 from streamlit_option_menu import option_menu
 from preprocess_salary import load_salary_summary, create_salary_summary
 
@@ -61,6 +61,7 @@ def ensure_db_and_summary():
         st.warning("Database incomplete. Reloading from Parquet...")
         dataframes = download_data_cached()
         setup_sqlite_db_from_csv(dataframes)
+        initialize_database()
 
 # Cache loading
 @st.cache_data

@@ -33,22 +33,45 @@ def create_top_skills_summary():
 
 @st.cache_data
 def load_top_skills_summary(job_title_short=None, type=None):
-    conn = sqlite3.connect(DB_PATH)
-
-    conditions = []
-    params = []
-
-    if job_title_short is not None:
-        conditions.append("job_title_short = ?")
-        params.append(job_title_short)
-    if type is not None:
-        conditions.append("type = ?")
-        params.append(type)
-
-    where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
-
-    query = f"SELECT * FROM job_title_skill_count {where_clause}"
-    df = pd.read_sql_query(query, conn, params=params)
-    conn.close()
+    """
+    Load skills summary with optimized database access.
+    Uses prepared statements and existing indexes.
+    """
+    with sqlite3.connect(DB_PATH) as conn:
+        # Use parameterized query with proper type handling
+        query = """
+        SELECT * FROM job_title_skill_count
+        WHERE (:job_title_short IS NULL OR job_title_short = :job_title_short)
+        AND (:type IS NULL OR type = :type)
+        """
+        
+        params = {
+            'job_title_short': job_title_short,
+            'type': type
+        }
+        
+        # Use pandas with named parameters
+        df = pd.read_sql_query(query, conn, params=params)
+        
+        # Ensure proper data types (optional)
+        if 'count' in df.columns:
+            df['count'] = pd.to_numeric(df['count'], errors='coerce')
+        
     return df
+
+# Ensure indexes exist (run this once during initialization)
+def initialize_database():
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_job_title_short 
+        ON job_title_skill_count(job_title_short)
+        """)
+        conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_type 
+        ON job_title_skill_count(type)
+        """)
+        conn.commit()
+    finally:
+        conn.close()
 
