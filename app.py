@@ -1,4 +1,3 @@
-import os
 import time
 import sqlite3
 import streamlit as st
@@ -6,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from load_data import download_and_load_parquet
-from preprocess_viz_top_skills import load_csv_summary
+from preprocess_top_skills import load_top_skills_summary, create_top_skills_summary
 from streamlit_option_menu import option_menu
 from preprocess_salary import load_salary_summary, create_salary_summary
 
@@ -48,9 +47,6 @@ def ensure_db_and_summary():
         st.warning("Database incomplete. Reloading from Parquet...")
         dataframes = download_data_cached()
         setup_sqlite_db_from_csv(dataframes)
-
-    # Create/load summary
-    return load_csv_summary()
 
 # Cache loading
 @st.cache_data
@@ -209,20 +205,22 @@ elif selected == "💰 Salary":
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
 # 🛠️ Top Skills
 elif selected == "🛠️ Top Skills":
     start = time.time()
 
     st.header("🛠️ Top Skills")
 
-    with st.spinner("Checking DB and summary..."):
-        df_top10_skills = ensure_db_and_summary()
+    df_top10_skills = create_top_skills_summary()
 
     st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
 
     # UI filters
     job_titles = ["Select All"] + sorted(df_top10_skills['job_title_short'].dropna().unique())
     selected_job_title = st.selectbox("Job Title :", options=job_titles, index=0)
+
+    job_chosen = None if selected_job_title == "Select All" else selected_job_title
 
     def format_label(option):
         labels = {
@@ -235,9 +233,7 @@ elif selected == "🛠️ Top Skills":
     selected_type_skill = st.radio("Skills :", options=skill_types, index=0, format_func=format_label, horizontal=True)
 
     # Filter logic
-    filtered = df_top10_skills.copy()
-    if selected_job_title != "Select All":
-        filtered = filtered[filtered['job_title_short'] == selected_job_title]
+    filtered = load_top_skills_summary(job_chosen)
     if selected_type_skill != "All":
         filtered = filtered[filtered['type'] == selected_type_skill]
 
