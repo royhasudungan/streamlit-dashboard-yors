@@ -32,11 +32,7 @@ def create_top_skills_summary():
     conn.close()
 
 @st.cache_data(ttl=3600) 
-def load_top_skills_summary(job_title_short=None, type=None):
-    """
-    Load skills summary with optimized database access.
-    Uses prepared statements and existing indexes.
-    """
+def load_top_skills_summary(job_title_short=None, type_job=None):
     with sqlite3.connect(DB_PATH) as conn:
         # Use parameterized query with proper type handling
         query = """
@@ -47,15 +43,11 @@ def load_top_skills_summary(job_title_short=None, type=None):
         
         params = {
             'job_title_short': job_title_short,
-            'type': type
+            'type': type_job
         }
         
         # Use pandas with named parameters
         df = pd.read_sql_query(query, conn, params=params)
-        
-        # Ensure proper data types (optional)
-        if 'count' in df.columns:
-            df['count'] = pd.to_numeric(df['count'], errors='coerce')
         
     return df
 
