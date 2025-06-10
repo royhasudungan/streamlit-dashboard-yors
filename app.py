@@ -23,12 +23,12 @@ div[data-testid="stSelectbox"] > div {
 """, unsafe_allow_html=True)
 
 DB_PATH = 'jobs_skills.db'
-CSV_SUMMARY_PATH = "job_title_skill_count.parquet"
+CSV_SUMMARY_PATH = 'job_title_skill_count.csv'
 
 # ✅ Cache heavy load
 @st.cache_data
 def load_csv_summary():
-    df = pd.read_parquet(CSV_SUMMARY_PATH)
+    return pd.read_parquet(CSV_SUMMARY_PATH)
 
 @st.cache_data
 def download_data_cached():
