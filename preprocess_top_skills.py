@@ -73,7 +73,7 @@ def load_top_skills_summary(job_title_short=None, skill_type=None, top_n=20):
     top_skills_df = top_skills_df.sort_values('percent', ascending=True).reset_index(drop=True)
 
     # Pilih dan rename kolom sesuai kebutuhan
-    result_df = top_skills_df[['skills', 'percent']].rename(columns={'skills': 'skill'})
+    result_df = top_skills_df[['skills', 'percent']]
 
     return result_df
 
