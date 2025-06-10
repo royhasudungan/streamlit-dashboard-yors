@@ -213,6 +213,8 @@ elif selected == "🛠️ Top Skills":
     st.header("🛠️ Top Skills")
 
     df_top10_skills = create_top_skills_summary()
+    st.write(df_top10_skills.head())  # Ini untuk lihat struktur datanya
+
 
     st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
 
