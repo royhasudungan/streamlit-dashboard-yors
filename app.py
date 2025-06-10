@@ -45,9 +45,12 @@ def download_data_cached():
 
 def setup_sqlite_db_from_csv(dataframes):
     conn = sqlite3.connect(DB_PATH)
-    dataframes['job_postings_fact.csv'].to_sql('job_postings_fact', conn, if_exists='replace', index=False)
-    dataframes['skills_dim.csv'].to_sql('skills_dim', conn, if_exists='replace', index=False)
-    dataframes['skills_job_dim.csv'].to_sql('skills_job_dim', conn, if_exists='replace', index=False)
+
+    # Ubah ke nama file Parquet
+    dataframes['job_postings_fact.parquet'].to_sql('job_postings_fact', conn, if_exists='replace', index=False)
+    dataframes['skills_dim.parquet'].to_sql('skills_dim', conn, if_exists='replace', index=False)
+    dataframes['skills_job_dim.parquet'].to_sql('skills_job_dim', conn, if_exists='replace', index=False)
+
     conn.commit()
     conn.close()
 
