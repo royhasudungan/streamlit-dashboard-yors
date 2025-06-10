@@ -4,9 +4,9 @@ import os
 import streamlit as st
 
 files = {
-    'job_postings_fact.parquet': '1drExsbrK32VjG5Xh_CAmtZ7jtPs-S0fU',
-    'skills_dim.parquet': '1YxJej2L9yNMJXLshuUcV06Zll2zaaFH9',
-    'skills_job_dim.parquet': '1eq7osBABUfja8W3nO5S1JrQK50pYN4nK'
+    'job_postings_fact.parquet': '19I6zhi6y-ETs2A25RfAZbxNjcWz6RhOO',
+    'skills_dim.parquet': '1DCAqlJuA2TbCvpuB0Kvp8dvY9hoH09L7',
+    'skills_job_dim.parquet': '1ZVSyFBSLQJzv8n6oqERhpOHY2j2gVlWs'
 }
 
 @st.cache_data(show_spinner=False)
