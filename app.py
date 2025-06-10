@@ -231,7 +231,6 @@ elif selected == "🛠️ Top Skills":
 
     create_top_skills_summary()
 
-    st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
 
     # UI filters
     job_titles = [
@@ -255,6 +254,7 @@ elif selected == "🛠️ Top Skills":
 
     type_chosen = None if selected_type_skill == "All" else selected_type_skill
 
+    st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
     # Filter logic
     filtered = load_top_skills_summary(job_chosen, type_chosen)
 
