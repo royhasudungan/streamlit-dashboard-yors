@@ -236,10 +236,10 @@ elif selected == "🛠️ Top Skills":
     skill_types = ["All", "programming", "databases", "webframeworks", "analyst_tools", "cloud", "os", "sync", "async", "other"]
     selected_type_skill = st.radio("Skills :", options=skill_types, index=0, format_func=format_label, horizontal=True)
 
+    type_chosen = None if selected_type_skill == "All" else selected_type_skill
+
     # Filter logic
-    filtered = load_top_skills_summary(job_chosen)
-    if selected_type_skill != "All":
-        filtered = filtered[filtered['type'] == selected_type_skill]
+    filtered = load_top_skills_summary(job_chosen, type_chosen)
 
     total_jobs = filtered['job_title'].nunique()
     skill_job_counts = filtered.groupby('skills')['job_title'].nunique()

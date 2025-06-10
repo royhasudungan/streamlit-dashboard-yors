@@ -32,13 +32,25 @@ def create_top_skills_summary():
     conn.close()
 
 @st.cache_data
-def load_top_skills_summary(job_title_short=None):
+def load_top_skills_summary(job_title_short=None, type=None):
     conn = sqlite3.connect(DB_PATH)
-    if job_title_short is None:
+    
+    if job_title_short is None and type is None:
         query = "SELECT * FROM job_title_skill_count"
         df = pd.read_sql_query(query, conn)
-    else:
+
+    elif job_title_short is not None and type is None:
         query = "SELECT * FROM job_title_skill_count WHERE job_title_short = ?"
         df = pd.read_sql_query(query, conn, params=(job_title_short,))
+
+    elif job_title_short is None and type is not None:
+        query = "SELECT * FROM job_title_skill_count WHERE type = ?"
+        df = pd.read_sql_query(query, conn, params=(type,))
+
+    else:  # both job_title_short and type are provided
+        query = "SELECT * FROM job_title_skill_count WHERE job_title_short = ? AND type = ?"
+        df = pd.read_sql_query(query, conn, params=(job_title_short, type))
+    
     conn.close()
     return df
+
