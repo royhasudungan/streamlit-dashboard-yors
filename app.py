@@ -224,105 +224,105 @@ elif selected == "💰 Salary":
     st.plotly_chart(fig, use_container_width=True)
 
 
-    # Chart tambahan
-    st.markdown("---")
+    # # Chart tambahan
+    # st.markdown("---")
 
-    col1, col2 = st.columns(2)
+    # col1, col2 = st.columns(2)
 
-    with col1:
-        st.markdown("### 📊 Salary Distribution")
+    # with col1:
+    #     st.markdown("### 📊 Salary Distribution")
 
-        # Pastikan menggunakan salary_df untuk distribusi gaji
-        fig_hist = px.histogram(
-            salary_df,  # Menggunakan salary_df untuk distribusi gaji
-            x="avg_salary",  # Menggunakan 'avg_salary' untuk distribusi gaji
-            nbins=20,
-            title="Salary Distribution"
-        )
+    #     # Pastikan menggunakan salary_df untuk distribusi gaji
+    #     fig_hist = px.histogram(
+    #         salary_df,  # Menggunakan salary_df untuk distribusi gaji
+    #         x="avg_salary",  # Menggunakan 'avg_salary' untuk distribusi gaji
+    #         nbins=20,
+    #         title="Salary Distribution"
+    #     )
 
-        fig_hist.update_layout(
-            font=dict(color=DARK_THEME['text_color']),
-            title={
-                'text': "Salary Distribution",
-                'x': 0.5,  # Posisi tengah (0=kiri, 0.5=tengah, 1=kanan)
-                'xanchor': 'center',  # Anchor point di tengah
-                'y': 0.95,  # Posisi vertikal title (sama dengan pie chart)
-                'yanchor': 'top',
-                'font': {'size': 20, 'color': DARK_THEME['text_color']}
-            },
-            xaxis=dict(
-                gridcolor=DARK_THEME['grid_color'], 
-                title_text="Average Salary (USD)",
-                title_font=dict(size=18),  # Ukuran font title x-axis
-                tickfont=dict(size=14),    # Ukuran font tick labels
-                title_standoff=25          # Jarak title dari axis (default ~20)
-            ),
-            yaxis=dict(
-                gridcolor=DARK_THEME['grid_color'],
-                title_text="Number of Workers",
-                title_font=dict(size=18),  # Ukuran font title y-axis
-                tickfont=dict(size=14)     # Ukuran font tick labels
-            ),
-            bargap=0.1,
-            height=600,  # Sama dengan pie chart
-            margin=dict(l=80, r=20, t=80, b=80)  # Margin yang konsisten
-        )
+    #     fig_hist.update_layout(
+    #         font=dict(color=DARK_THEME['text_color']),
+    #         title={
+    #             'text': "Salary Distribution",
+    #             'x': 0.5,  # Posisi tengah (0=kiri, 0.5=tengah, 1=kanan)
+    #             'xanchor': 'center',  # Anchor point di tengah
+    #             'y': 0.95,  # Posisi vertikal title (sama dengan pie chart)
+    #             'yanchor': 'top',
+    #             'font': {'size': 20, 'color': DARK_THEME['text_color']}
+    #         },
+    #         xaxis=dict(
+    #             gridcolor=DARK_THEME['grid_color'], 
+    #             title_text="Average Salary (USD)",
+    #             title_font=dict(size=18),  # Ukuran font title x-axis
+    #             tickfont=dict(size=14),    # Ukuran font tick labels
+    #             title_standoff=25          # Jarak title dari axis (default ~20)
+    #         ),
+    #         yaxis=dict(
+    #             gridcolor=DARK_THEME['grid_color'],
+    #             title_text="Number of Workers",
+    #             title_font=dict(size=18),  # Ukuran font title y-axis
+    #             tickfont=dict(size=14)     # Ukuran font tick labels
+    #         ),
+    #         bargap=0.1,
+    #         height=600,  # Sama dengan pie chart
+    #         margin=dict(l=80, r=20, t=80, b=80)  # Margin yang konsisten
+    #     )
 
-        fig_hist.update_traces(
-            textfont=dict(color=DARK_THEME['text_color'], size=12),  # Font size untuk text di pie chart
-            marker_color=DARK_THEME['primary_color'],
-            hovertemplate='<b>Average Salary:</b> %{x}<br>' +
-                        '<b>Workers:</b> %{y}<br>' +
-                        '<extra></extra>'  # Menghilangkan box tambahan
-        )
+    #     fig_hist.update_traces(
+    #         textfont=dict(color=DARK_THEME['text_color'], size=12),  # Font size untuk text di pie chart
+    #         marker_color=DARK_THEME['primary_color'],
+    #         hovertemplate='<b>Average Salary:</b> %{x}<br>' +
+    #                     '<b>Workers:</b> %{y}<br>' +
+    #                     '<extra></extra>'  # Menghilangkan box tambahan
+    #     )
 
-        st.plotly_chart(fig_hist, use_container_width=True)
+    #     st.plotly_chart(fig_hist, use_container_width=True)
 
-    with col2:
-        st.markdown("###  Job Title Distribution")
+    # with col2:
+    #     st.markdown("###  Job Title Distribution")
 
-        # Gunakan job_df_filtered untuk distribusi job title
-        job_counts = salary_df['job_title_short'].value_counts().head(8)  # Gunakan data dari salary_df
+    #     # Gunakan job_df_filtered untuk distribusi job title
+    #     job_counts = salary_df['job_title_short'].value_counts().head(8)  # Gunakan data dari salary_df
 
-        fig_pie = px.pie(
-            values=job_counts.values,
-            names=job_counts.index,
-            title="Job Title Distribution"
-        )
+    #     fig_pie = px.pie(
+    #         values=job_counts.values,
+    #         names=job_counts.index,
+    #         title="Job Title Distribution"
+    #     )
 
-        fig_pie.update_layout(
-            title={
-                'text': "Job Title Distribution",
-                'x': 0.5,  # Posisi tengah (0=kiri, 0.5=tengah, 1=kanan)
-                'xanchor': 'center',  # Anchor point di tengah
-                'y': 0.95,  # Posisi vertikal title yang sama dengan histogram
-                'yanchor': 'top',
-                'font': {'size': 20, 'color': DARK_THEME['text_color']}
-            },
-            font=dict(color=DARK_THEME['text_color'], size=14),  # Font size untuk legend
-            legend=dict(
-                orientation="h",  # horizontal
-                yanchor="top",
-                y=-0.05,  # Jarak legenda diperkecil (dari -0.1 ke -0.05)
-                xanchor="center",
-                x=0.5,    # centered horizontally
-                font=dict(size=14)  # Font size legend
-            ),
-            margin=dict(l=20, r=20, t=80, b=80),  # Margin top sama dengan histogram, bottom dikurangi
-            height=600,
-            showlegend=True
-        )
+    #     fig_pie.update_layout(
+    #         title={
+    #             'text': "Job Title Distribution",
+    #             'x': 0.5,  # Posisi tengah (0=kiri, 0.5=tengah, 1=kanan)
+    #             'xanchor': 'center',  # Anchor point di tengah
+    #             'y': 0.95,  # Posisi vertikal title yang sama dengan histogram
+    #             'yanchor': 'top',
+    #             'font': {'size': 20, 'color': DARK_THEME['text_color']}
+    #         },
+    #         font=dict(color=DARK_THEME['text_color'], size=14),  # Font size untuk legend
+    #         legend=dict(
+    #             orientation="h",  # horizontal
+    #             yanchor="top",
+    #             y=-0.05,  # Jarak legenda diperkecil (dari -0.1 ke -0.05)
+    #             xanchor="center",
+    #             x=0.5,    # centered horizontally
+    #             font=dict(size=14)  # Font size legend
+    #         ),
+    #         margin=dict(l=20, r=20, t=80, b=80),  # Margin top sama dengan histogram, bottom dikurangi
+    #         height=600,
+    #         showlegend=True
+    #     )
 
-        fig_pie.update_traces(
-            domain=dict(x=[0.1, 0.9], y=[0.15, 0.85]),  # Posisi pie chart disesuaikan untuk jarak legend lebih kecil
-            marker=dict(colors=DARK_THEME['accent_colors']),
-            textfont=dict(color=DARK_THEME['text_color'], size=12),  # Font size untuk text di pie chart
-            hovertemplate='<b>Job Title:</b> %{label}<br>' +
-                        '<b>Workers:</b> %{value}<br>' +
-                        '<extra></extra>'  # Menghilangkan box tambahan
-        )
+    #     fig_pie.update_traces(
+    #         domain=dict(x=[0.1, 0.9], y=[0.15, 0.85]),  # Posisi pie chart disesuaikan untuk jarak legend lebih kecil
+    #         marker=dict(colors=DARK_THEME['accent_colors']),
+    #         textfont=dict(color=DARK_THEME['text_color'], size=12),  # Font size untuk text di pie chart
+    #         hovertemplate='<b>Job Title:</b> %{label}<br>' +
+    #                     '<b>Workers:</b> %{value}<br>' +
+    #                     '<extra></extra>'  # Menghilangkan box tambahan
+    #     )
 
-        st.plotly_chart(fig_pie, use_container_width=True)
+    #     st.plotly_chart(fig_pie, use_container_width=True)
 
 
 # 🛠️ Top Skills
