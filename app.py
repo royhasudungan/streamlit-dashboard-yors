@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from load_data import download_and_load_parquet
-from preprocess_viz_top_skills import create_view_model_top_skills_sql, load_skill_summary
+from preprocess_viz_top_skills import load_csv_summary
 from streamlit_option_menu import option_menu
 
 
