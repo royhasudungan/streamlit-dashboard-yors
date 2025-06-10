@@ -16,6 +16,12 @@ def download_and_load_csv():
         url = f'https://drive.google.com/uc?id={file_id}'
         if not os.path.exists(filename):
             gdown.download(url, filename, quiet=True)
-        df = pd.read_csv(filename)
+        parquet_file = filename.replace('.csv', '.parquet')
+        if os.path.exists(parquet_file):
+            df = pd.read_parquet(parquet_file)
+        else:
+            df = pd.read_csv(filename, low_memory=False)
+            df.to_parquet(parquet_file)
         dataframes[filename] = df
     return dataframes
+
