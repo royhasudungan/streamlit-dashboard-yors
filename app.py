@@ -103,9 +103,9 @@ elif selected == "🛠️ Top Skills":
     
     st.write(f"⏱️ Loaded  **{(time.time() - start):.2f} seconds**")
 
-    if not os.path.exists(DB_PATH):
-        with st.spinner("Setting up SQLite DB..."):
-            setup_sqlite_db_from_csv(dataframes)
+    with st.spinner("Setting up SQLite DB..."):
+        setup_sqlite_db_from_csv(dataframes)
+
 
     st.write(f"⏱️ Setup db  **{(time.time() - start):.2f} seconds**")
 
