@@ -33,6 +33,7 @@ def create_view_model_top_skills_sql():
     conn.close()
 
     # Simpan csv sebagai cache (optional, agar konsisten dengan kode lama)
-    df_summary.to_csv('job_title_skill_count.csv', index=False)
+    df_summary.to_parquet("job_title_skill_count.parquet")
+
 
     return df_summary
