@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from load_data import download_and_load_parquet
-from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary, initialize_database
+from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary
 from streamlit_option_menu import option_menu
 from preprocess_salary import load_salary_summary, create_salary_summary
 
@@ -68,7 +68,6 @@ def download_data_cached():
     return download_and_load_parquet()
 
 ensure_db_and_summary()
-initialize_database()
 
 # Sidebar
 with st.sidebar:
