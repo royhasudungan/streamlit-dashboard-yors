@@ -6,11 +6,9 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from load_data import download_and_load_parquet
-from preprocess_viz_top_skills import create_view_model_top_skills_sql
+from preprocess_viz_top_skills import create_view_model_top_skills_sql, load_skill_summary
 from streamlit_option_menu import option_menu
 
-DB_PATH = 'jobs_skills.db'
-CSV_SUMMARY_PATH = 'job_title_skill_count.parquet'
 
 # Styling
 st.markdown("""
@@ -25,14 +23,7 @@ div[data-testid="stSelectbox"] > div {
 </style>
 """, unsafe_allow_html=True)
 
-# Cache loading
-@st.cache_data
-def load_csv_summary():
-    return pd.read_parquet(CSV_SUMMARY_PATH)
-
-@st.cache_data
-def download_data_cached():
-    return download_and_load_parquet()
+DB_PATH = 'jobs_skills.db'
 
 def setup_sqlite_db_from_csv(dataframes):
     conn = sqlite3.connect(DB_PATH)
@@ -42,7 +33,6 @@ def setup_sqlite_db_from_csv(dataframes):
     conn.commit()
     conn.close()
 
-# Check if DB has required tables
 def db_has_required_tables():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -52,19 +42,19 @@ def db_has_required_tables():
     required = {'job_postings_fact', 'skills_dim', 'skills_job_dim'}
     return required.issubset(tables)
 
-# Make sure summary file exists, else create it
-def ensure_summary_exists():
+def ensure_db_and_summary():
     if not db_has_required_tables():
         st.warning("Database incomplete. Reloading from Parquet...")
         dataframes = download_data_cached()
         setup_sqlite_db_from_csv(dataframes)
 
-    if not os.path.exists(CSV_SUMMARY_PATH):
-        st.info("Creating summary file...")
-        df_summary = create_view_model_top_skills_sql()
-        return df_summary
-    else:
-        return load_csv_summary()
+    # Create/load summary
+    return load_csv_summary()
+
+# Cache loading
+@st.cache_data
+def download_data_cached():
+    return download_and_load_parquet()
 
 # Sidebar
 with st.sidebar:
@@ -103,13 +93,8 @@ elif selected == "🛠️ Top Skills":
 
     st.header("🛠️ Top Skills")
 
-    if not db_has_required_tables():
-        with st.spinner("Setting up SQLite DB..."):
-            dataframes = download_data_cached()
-            setup_sqlite_db_from_csv(dataframes)
-
-    with st.spinner("Loading summary..."):
-        df_top10_skills = ensure_summary_exists()
+    with st.spinner("Checking DB and summary..."):
+        df_top10_skills = ensure_db_and_summary()
 
     st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
 
