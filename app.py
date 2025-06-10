@@ -61,7 +61,6 @@ def ensure_db_and_summary():
         st.warning("Database incomplete. Reloading from Parquet...")
         dataframes = download_data_cached()
         setup_sqlite_db_from_csv(dataframes)
-        initialize_database()
 
 # Cache loading
 @st.cache_data
@@ -69,6 +68,7 @@ def download_data_cached():
     return download_and_load_parquet()
 
 ensure_db_and_summary()
+initialize_database()
 
 # Sidebar
 with st.sidebar:
