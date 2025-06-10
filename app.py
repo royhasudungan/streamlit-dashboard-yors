@@ -3,7 +3,7 @@ import time
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from load_data import download_and_load_csv
+from load_data import download_and_load_parquet
 from preprocess_viz_top_skills import create_view_model_top_skills_sql
 from streamlit_option_menu import option_menu
 import sqlite3
@@ -41,7 +41,7 @@ def ensure_summary_exists():
 
 @st.cache_data
 def download_data_cached():
-    return download_and_load_csv()
+    return download_and_load_parquet()
 
 def setup_sqlite_db_from_csv(dataframes):
     conn = sqlite3.connect(DB_PATH)
