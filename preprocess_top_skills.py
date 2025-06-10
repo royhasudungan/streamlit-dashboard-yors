@@ -30,7 +30,6 @@ def create_top_skills_summary():
         """)
         conn.commit()
     conn.close()
-    initialize_database()
 
 @st.cache_data
 def load_top_skills_summary(job_title_short=None, skill_type=None, top_n=20):
@@ -81,6 +80,7 @@ def load_top_skills_summary(job_title_short=None, skill_type=None, top_n=20):
 
 
 # Ensure indexes exist (run this once during initialization)
+@st.cache_data
 def initialize_database():
     conn = sqlite3.connect(DB_PATH)
     try:

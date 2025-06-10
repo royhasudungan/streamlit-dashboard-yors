@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from load_data import download_and_load_parquet
-from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary
+from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary, initialize_database
 from streamlit_option_menu import option_menu
 from preprocess_salary import load_salary_summary, create_salary_summary
 
@@ -329,21 +329,21 @@ elif selected == "💰 Salary":
 
 # 🛠️ Top Skills
 elif selected == "🛠️ Top Skills":
-    start = time.time()
 
+    start = time.time()
     st.header("🛠️ Top Skills")
 
+    # Ensure database & summary table are created
     create_top_skills_summary()
-
+    initialize_database()
 
     # UI filters
     job_titles = [
         "Select All", "Business Analyst", "Cloud Engineer", "Data Analyst", "Data Engineer",
-        "Data Scientist", "Machine Learning Engineer", "Senior Data Analyst", 
+        "Data Scientist", "Machine Learning Engineer", "Senior Data Analyst",
         "Senior Data Engineer", "Senior Data Scientist", "Software Engineer"
     ]
     selected_job_title = st.selectbox("Job Title :", options=job_titles, index=0)
-
     job_chosen = None if selected_job_title == "Select All" else selected_job_title
 
     def format_label(option):
@@ -355,68 +355,68 @@ elif selected == "🛠️ Top Skills":
 
     skill_types = ["All", "programming", "databases", "webframeworks", "analyst_tools", "cloud", "os", "sync", "async", "other"]
     selected_type_skill = st.radio("Skills :", options=skill_types, index=0, format_func=format_label, horizontal=True)
-
     type_chosen = None if selected_type_skill == "All" else selected_type_skill
 
     st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
-    # Filter logic
+
+    # Load filtered data
     filtered = load_top_skills_summary(job_chosen, type_chosen)
     st.write(f"⏱️ Loaded data filtered **{(time.time() - start):.2f} seconds**")
-    percent_per_skill = filtered['percent']
-    skill_order = filtered['skills']
 
-    st.write(f"⏱️ filtered2 **{(time.time() - start):.2f} seconds**")
+    if filtered.empty:
+        st.info("No data found for the selected filters.")
+    else:
+        skill_order = filtered['skill']
+        percent_per_skill = filtered.set_index('skill')['percent']
 
-    # Bar chart
-    colorscale = px.colors.sequential.Tealgrn[::-1]
-    xaxis_max = min(percent_per_skill.max() + 5, 100)
-    bar_count = len(skill_order)
-    font_size = 25
+        # Plotting
+        colorscale = px.colors.sequential.Tealgrn[::-1]
+        xaxis_max = min(percent_per_skill.max() + 5, 100)
+        font_size = 25
+        bar_count = len(skill_order)
 
-    st.write(f"⏱️ define **{(time.time() - start):.2f} seconds**")
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            y=skill_order,
+            x=percent_per_skill.loc[skill_order],
+            orientation='h',
+            marker=dict(color=percent_per_skill.loc[skill_order], colorscale=colorscale),
+            hovertemplate="<b>%{y}</b><br>📊 jobfair requires %{x:.1f}% <extra></extra>"
+        ))
 
-    fig = go.Figure()
-    fig.add_trace(go.Bar(
-        y=skill_order,
-        x=percent_per_skill[skill_order],
-        orientation='h',
-        marker=dict(color=percent_per_skill[skill_order], colorscale=colorscale),
-        hovertemplate=f"<b>%{{y}}</b><br>📊 jobfair requires %{{x:.1f}}% <extra></extra>"
-    ))
+        annotations = []
+        for skill in skill_order:
+            val = percent_per_skill[skill]
+            annotations.extend([
+                dict(x=0, y=skill, xanchor='right', yanchor='middle',
+                     text=skill, font=dict(color='white', size=font_size), showarrow=False, xshift=-10),
+                dict(x=val, y=skill, xanchor='left', yanchor='middle',
+                     text=f"{val:.1f}%", font=dict(color='white', size=font_size), showarrow=False, xshift=10)
+            ])
 
-    st.write(f"⏱️ go **{(time.time() - start):.2f} seconds**")
+        fig.update_layout(
+            annotations=annotations,
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white'),
+            xaxis=dict(visible=False, range=[0, xaxis_max]),
+            yaxis=dict(visible=False),
+            margin=dict(l=150, r=40, t=60, b=40),
+            hoverlabel=dict(bgcolor='#16213e', font=dict(size=0.75 * font_size)),
+            height=max(300, 37 * bar_count)
+        )
 
-    # Annotations
-    annotations = []
-    for skill in skill_order:
-        val = percent_per_skill[skill]
-        annotations.append(dict(x=0, y=skill, xanchor='right', yanchor='middle',
-                                text=skill, font=dict(color='white', size=font_size), showarrow=False, xshift=-10))
-        annotations.append(dict(x=val, y=skill, xanchor='left', yanchor='middle',
-                                text=f"{val:.1f}%", font=dict(color='white', size=font_size), showarrow=False, xshift=10))
+        st.plotly_chart(fig, use_container_width=True, config={
+            'displayModeBar': True,
+            'modeBarButtonsToRemove': ['zoom2d', 'pan2d', 'select2d', 'lasso2d',
+                                       'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d',
+                                       'hoverClosestCartesian', 'hoverCompareCartesian',
+                                       'toggleSpikelines', 'toImage'],
+            'displaylogo': False
+        })
 
-    fig.update_layout(
-        annotations=annotations,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='white'),
-        xaxis=dict(visible=False, range=[0, xaxis_max]),
-        yaxis=dict(visible=False),
-        margin=dict(l=150, r=40, t=60, b=40),
-        hoverlabel=dict(bgcolor='#16213e', font=dict(size=0.75 * font_size)),
-        height=max(300, 37 * bar_count)
-    )
+        st.write(f"⏱️ Render complete in **{(time.time() - start):.2f} seconds**")
 
-    st.plotly_chart(fig, use_container_width=True, config={
-        'displayModeBar': True,
-        'modeBarButtonsToRemove': ['zoom2d', 'pan2d', 'select2d', 'lasso2d',
-                                   'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d',
-                                   'hoverClosestCartesian', 'hoverCompareCartesian',
-                                   'toggleSpikelines', 'toImage'],
-        'displaylogo': False
-    })
-
-    st.write(f"⏱️ Render complete in **{(time.time() - start):.2f} seconds**")
 
 # 📍 Location
 elif selected == "📍 Location":
