@@ -366,8 +366,8 @@ elif selected == "🛠️ Top Skills":
     if filtered.empty:
         st.info("No data found for the selected filters.")
     else:
-        skill_order = filtered['skill']
-        percent_per_skill = filtered.set_index('skill')['percent']
+        skill_order = filtered['skills']
+        percent_per_skill = filtered.set_index('skills')['percent']
 
         # Plotting
         colorscale = px.colors.sequential.Tealgrn[::-1]
