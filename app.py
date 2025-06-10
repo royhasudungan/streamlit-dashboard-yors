@@ -371,11 +371,15 @@ elif selected == "🛠️ Top Skills":
     percent_per_skill = percent_per_skill[percent_per_skill >= 0.05]
     skill_order = percent_per_skill.sort_values().index.tolist()
 
+    st.write(f"⏱️ filtered2 **{(time.time() - start):.2f} seconds**")
+
     # Bar chart
     colorscale = px.colors.sequential.Tealgrn[::-1]
     xaxis_max = min(percent_per_skill.max() + 5, 100)
     bar_count = len(skill_order)
     font_size = 25
+
+    st.write(f"⏱️ define **{(time.time() - start):.2f} seconds**")
 
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -385,6 +389,8 @@ elif selected == "🛠️ Top Skills":
         marker=dict(color=percent_per_skill[skill_order], colorscale=colorscale),
         hovertemplate=f"<b>%{{y}}</b><br>📊 jobfair requires %{{x:.1f}}% <extra></extra>"
     ))
+
+    st.write(f"⏱️ go **{(time.time() - start):.2f} seconds**")
 
     # Annotations
     annotations = []
