@@ -65,12 +65,18 @@ def load_top_skills_summary(job_title_short=None, skill_type=None, top_n=20):
         total_jobs = pd.read_sql_query(query_total_jobs, conn, params=params).iloc[0]['total_jobs']
         top_skills_df = pd.read_sql_query(query_top_skills, conn, params=params)
 
-    # Hitung persentase dan filter
+    # Hitung persentase dan filter nilai kecil
     top_skills_df['percent'] = (top_skills_df['job_count'] / total_jobs * 100).round(2)
     top_skills_df = top_skills_df[top_skills_df['percent'] >= 0.05]
-    skill_order = top_skills_df.sort_values('percent')['skills'].tolist()
 
-    return top_skills_df, skill_order, total_jobs
+    # Urutkan skill berdasarkan percent ascending (kalau mau descending tinggal ganti)
+    top_skills_df = top_skills_df.sort_values('percent', ascending=True).reset_index(drop=True)
+
+    # Pilih dan rename kolom sesuai kebutuhan
+    result_df = top_skills_df[['skills', 'percent']].rename(columns={'skills': 'skill'})
+
+    return result_df
+
 
 
 # Ensure indexes exist (run this once during initialization)
