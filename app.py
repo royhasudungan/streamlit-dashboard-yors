@@ -212,14 +212,16 @@ elif selected == "🛠️ Top Skills":
 
     st.header("🛠️ Top Skills")
 
-    df_top10_skills = create_top_skills_summary()
-    st.write(df_top10_skills.head())  # Ini untuk lihat struktur datanya
-
+    create_top_skills_summary()
 
     st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
 
     # UI filters
-    job_titles = ["Select All"] + sorted(df_top10_skills['job_title_short'].dropna().unique())
+    job_titles = [
+        "Select All", "Business Analyst", "Cloud Engineer", "Data Analyst", "Data Engineer",
+        "Data Scientist", "Machine Learning Engineer", "Senior Data Analyst", 
+        "Senior Data Engineer", "Senior Data Scientist", "Software Engineer"
+    ]
     selected_job_title = st.selectbox("Job Title :", options=job_titles, index=0)
 
     job_chosen = None if selected_job_title == "Select All" else selected_job_title
