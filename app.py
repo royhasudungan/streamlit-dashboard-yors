@@ -25,14 +25,18 @@ div[data-testid="stSelectbox"] > div {
 DB_PATH = 'jobs_skills.db'
 CSV_SUMMARY_PATH = 'job_title_skill_count.parquet'
 
-# ✅ Cache heavy load
 @st.cache_data
 def load_csv_summary():
     return pd.read_parquet(CSV_SUMMARY_PATH)
 
-@st.cache_data
-def download_data_cached():
-    return download_and_load_csv()
+# Fungsi ini untuk memastikan file summary ada, kalau belum, buat dulu
+def ensure_summary_exists():
+    if not os.path.exists(CSV_SUMMARY_PATH):
+        st.info("Summary file tidak ditemukan, membuat baru...")
+        df_summary = create_view_model_top_skills_sql()
+        return df_summary
+    else:
+        return load_csv_summary()
 
 def setup_sqlite_db_from_csv(dataframes):
     conn = sqlite3.connect(DB_PATH)
@@ -97,13 +101,9 @@ elif selected == "🛠️ Top Skills":
 
     st.write(f"⏱️ Setup db  **{(time.time() - start):.2f} seconds**")
 
-    if not os.path.exists(CSV_SUMMARY_PATH):
-        with st.spinner("Generating summary..."):
-            create_view_model_top_skills_sql()
-
-    st.write(f"⏱️ create csv  **{(time.time() - start):.2f} seconds**")
-
-    df_top10_skills = load_csv_summary()
+    
+    # Di dalam main Streamlit kamu, panggil ini:
+    df_top10_skills = ensure_summary_exists()
     st.write(f"⏱️ load csv  **{(time.time() - start):.2f} seconds**")
 
     job_titles = ["Select All"] + sorted(df_top10_skills['job_title_short'].unique())

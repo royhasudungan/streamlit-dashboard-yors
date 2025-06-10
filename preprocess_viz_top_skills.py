@@ -1,14 +1,15 @@
 import sqlite3
+import pandas as pd
 import streamlit as st
 
 DB_PATH = 'jobs_skills.db'
+CSV_SUMMARY_PATH = 'job_title_skill_count.parquet'
 
 @st.cache_data(show_spinner=False)
 def create_view_model_top_skills_sql():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Buat tabel summary di SQLite (replace jika sudah ada)
     cursor.execute("DROP TABLE IF EXISTS job_title_skill_count")
 
     cursor.execute("""
@@ -27,13 +28,10 @@ def create_view_model_top_skills_sql():
 
     conn.commit()
 
-    # Load hasil ke DataFrame untuk dipakai Streamlit
-    import pandas as pd
     df_summary = pd.read_sql_query("SELECT * FROM job_title_skill_count", conn)
     conn.close()
 
-    # Simpan csv sebagai cache (optional, agar konsisten dengan kode lama)
-    df_summary.to_parquet("job_title_skill_count.parquet")
-
+    # Simpan file hasil query untuk cache
+    df_summary.to_parquet(CSV_SUMMARY_PATH)
 
     return df_summary
