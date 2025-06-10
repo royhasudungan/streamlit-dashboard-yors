@@ -31,25 +31,47 @@ def create_top_skills_summary():
         conn.commit()
     conn.close()
 
-@st.cache_data(ttl=3600) 
-def load_top_skills_summary(job_title_short=None, type_job=None):
+@st.cache_data
+def load_top_skills_summary(job_title_short=None, skill_type=None, top_n=20):
+    conditions = []
+    params = []
+
+    if job_title_short:
+        conditions.append("job_title_short = ?")
+        params.append(job_title_short)
+    if skill_type:
+        conditions.append("type = ?")
+        params.append(skill_type)
+
+    where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+
+    query_total_jobs = f"""
+        SELECT COUNT(DISTINCT job_title) as total_jobs
+        FROM job_title_skill_count
+        {where_clause}
+    """
+
+    query_top_skills = f"""
+        SELECT skills, COUNT(DISTINCT job_title) as job_count
+        FROM job_title_skill_count
+        {where_clause}
+        GROUP BY skills
+        HAVING skills IS NOT NULL
+        ORDER BY job_count DESC
+        LIMIT {top_n}
+    """
+
     with sqlite3.connect(DB_PATH) as conn:
-        # Use parameterized query with proper type handling
-        query = """
-        SELECT * FROM job_title_skill_count
-        WHERE (:job_title_short IS NULL OR job_title_short = :job_title_short)
-        AND (:type IS NULL OR type = :type)
-        """
-        
-        params = {
-            'job_title_short': job_title_short,
-            'type': type_job
-        }
-        
-        # Use pandas with named parameters
-        df = pd.read_sql_query(query, conn, params=params)
-        
-    return df
+        total_jobs = pd.read_sql_query(query_total_jobs, conn, params=params).iloc[0]['total_jobs']
+        top_skills_df = pd.read_sql_query(query_top_skills, conn, params=params)
+
+    # Hitung persentase dan filter
+    top_skills_df['percent'] = (top_skills_df['job_count'] / total_jobs * 100).round(2)
+    top_skills_df = top_skills_df[top_skills_df['percent'] >= 0.05]
+    skill_order = top_skills_df.sort_values('percent')['skills'].tolist()
+
+    return top_skills_df, skill_order, total_jobs
+
 
 # Ensure indexes exist (run this once during initialization)
 def initialize_database():

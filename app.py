@@ -361,15 +361,8 @@ elif selected == "🛠️ Top Skills":
 
     st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
     # Filter logic
-    filtered = load_top_skills_summary(job_chosen, type_chosen)
+    percent_per_skill, skill_order, total_jobs = load_top_skills_summary(job_chosen, type_chosen)
     st.write(f"⏱️ Loaded data filtered **{(time.time() - start):.2f} seconds**")
-
-    total_jobs = filtered['job_title'].nunique()
-    skill_job_counts = filtered.groupby('skills')['job_title'].nunique()
-    top_skills = skill_job_counts.nlargest(20).index.dropna().tolist()
-    percent_per_skill = (skill_job_counts[top_skills] / total_jobs * 100).round(2)
-    percent_per_skill = percent_per_skill[percent_per_skill >= 0.05]
-    skill_order = percent_per_skill.sort_values().index.tolist()
 
     st.write(f"⏱️ filtered2 **{(time.time() - start):.2f} seconds**")
 
