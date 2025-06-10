@@ -362,6 +362,7 @@ elif selected == "🛠️ Top Skills":
     st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
     # Filter logic
     top_skills_df, skill_order, total_jobs = load_top_skills_summary(job_chosen, type_chosen)
+    st.write(skill_order)
     st.write(f"⏱️ Loaded data filtered **{(time.time() - start):.2f} seconds**")
     percent_per_skill = top_skills_df['percent']
 
