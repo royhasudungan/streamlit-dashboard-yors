@@ -23,6 +23,20 @@ div[data-testid="stSelectbox"] > div {
 </style>
 """, unsafe_allow_html=True)
 
+ # Warna tema dark yang konsisten
+DARK_THEME = {
+    'background_color': '#0E1117',
+    'paper_color': '#262730',
+    'text_color': '#FAFAFA',
+    'grid_color': '#464853',
+    'primary_color': '#FF6B6B',
+    'secondary_color': '#4ECDC4',
+    'success_color': '#45B7D1',
+    'accent_colors': ['#FF6B6B', '#4ECDC4', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF'],
+    'gradient_colors' : ['#014A7A', '#01579B', '#0277BD', '#0288D1', '#039BE5', '#03A9F4', '#29B6F6', '#4FC3F7', '#81D4FA', '#B3E5FC']
+}
+
+
 DB_PATH = 'jobs_skills.db'
 
 def setup_sqlite_db_from_csv(dataframes):
@@ -145,18 +159,20 @@ elif selected == "💰 Salary":
 
     # Chart utama
     fig = go.Figure()
+
+    # Add bars dengan gradient effect
     fig.add_trace(go.Bar(
         x=display_df.sort_values(by="avg_salary")["avg_salary"],
         y=display_df.sort_values(by="avg_salary")["job_title_short"],
         orientation='h',
         marker=dict(
             color=display_df.sort_values(by="avg_salary", ascending=False)["avg_salary"],
-            colorscale='Plasma',
-            line=dict(color='rgba(0,0,0,0)')
+            # colorscale='Plasma',
+            line=dict(color=DARK_THEME["gradient_colors"])
         ),
         text=[f'${x:,.0f}' for x in display_df.sort_values(by="avg_salary")["avg_salary"]],
         textposition='outside',
-        textfont=dict(color='white', size=11),
+        textfont=dict(color=DARK_THEME['text_color'], size=11),
         customdata=display_df.sort_values(by="avg_salary")[["max_salary", "min_salary", "count"]].values,
         hovertemplate=(
             "<b>%{y}</b><br>"
@@ -168,39 +184,40 @@ elif selected == "💰 Salary":
         )
     ))
 
+    # Layout dengan tema dark
     fig.update_layout(
         title={
             'text': chart_title,
-            'font': {'size': 20, 'color': 'white'},
+            'font': {'size': 20, 'color': DARK_THEME['text_color']},
             'x': 0.5,
-            'xanchor': 'center',
+            'xanchor' : 'center',
         },
-        font=dict(color='white'),
+        # plot_bgcolor=DARK_THEME['background_color'],
+        # paper_bgcolor=DARK_THEME['paper_color'],
+        font=dict(color=DARK_THEME['text_color']),
         xaxis=dict(
             title="Average Yearly Salary (USD)",
-            title_font=dict(size=18),
-            title_standoff=25,
+            title_font=dict(size=18),  # Set x-axis title font size to 18
+            title_standoff=25,         # Add space between title and tick labels
+            gridcolor=DARK_THEME['grid_color'],
             zeroline=False,
             tickformat='$,.0f',
-            tickfont=dict(size=14),
-            gridcolor='gray'
+            tickfont=dict(size=14) # Optionally set tick label font size
         ),
         yaxis=dict(
             title="Job Title",
-            title_font=dict(size=18),
+            title_font=dict(size=18),  # Set y-axis title font size to 18
+            gridcolor=DARK_THEME['grid_color'],
             zeroline=False,
-            tickfont=dict(size=14),
-            gridcolor='gray',
-            autorange="reversed"
+            # autorange="reversed", # To show highest paying job at the top
+            tickfont=dict(size=14) # Optionally set tick label font size
         ),
         margin=dict(l=20, r=20, t=60, b=20),
         height=500,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
         hoverlabel=dict(
-            bgcolor='#16213e',
-            bordercolor='#0F3460',
-            font_color='white'
+            bgcolor=DARK_THEME['paper_color'],
+            bordercolor=DARK_THEME['primary_color'],
+            font_color=DARK_THEME['text_color']
         )
     )
 
