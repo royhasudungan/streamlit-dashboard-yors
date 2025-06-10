@@ -38,6 +38,11 @@ def ensure_summary_exists():
     else:
         return load_csv_summary()
 
+
+@st.cache_data
+def download_data_cached():
+    return download_and_load_csv()
+
 def setup_sqlite_db_from_csv(dataframes):
     conn = sqlite3.connect(DB_PATH)
     dataframes['job_postings_fact.csv'].to_sql('job_postings_fact', conn, if_exists='replace', index=False)
@@ -101,8 +106,7 @@ elif selected == "🛠️ Top Skills":
 
     st.write(f"⏱️ Setup db  **{(time.time() - start):.2f} seconds**")
 
-    
-    # Di dalam main Streamlit kamu, panggil ini:
+
     df_top10_skills = ensure_summary_exists()
     st.write(f"⏱️ load csv  **{(time.time() - start):.2f} seconds**")
 
