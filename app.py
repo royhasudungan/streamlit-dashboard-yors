@@ -88,16 +88,23 @@ elif selected == "🛠️ Top Skills":
 
     with st.spinner("Loading data..."):
         dataframes = download_data_cached()
+    
+    st.write(f"⏱️ Loaded  **{(time.time() - start):.2f} seconds**")
 
     if not os.path.exists(DB_PATH):
         with st.spinner("Setting up SQLite DB..."):
             setup_sqlite_db_from_csv(dataframes)
 
+    st.write(f"⏱️ Setup db  **{(time.time() - start):.2f} seconds**")
+
     if not os.path.exists(CSV_SUMMARY_PATH):
         with st.spinner("Generating summary..."):
             create_view_model_top_skills_sql()
 
+    st.write(f"⏱️ create csv  **{(time.time() - start):.2f} seconds**")
+
     df_top10_skills = load_csv_summary()
+    st.write(f"⏱️ load csv  **{(time.time() - start):.2f} seconds**")
 
     job_titles = ["Select All"] + sorted(df_top10_skills['job_title_short'].unique())
     selected_job_title = st.selectbox("Job Title :", options=job_titles, index=0)
