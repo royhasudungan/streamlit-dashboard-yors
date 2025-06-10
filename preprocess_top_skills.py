@@ -31,7 +31,7 @@ def create_top_skills_summary():
         conn.commit()
     conn.close()
 
-@st.cache_data
+@st.cache_data(ttl=3600) 
 def load_top_skills_summary(job_title_short=None, type=None):
     """
     Load skills summary with optimized database access.
