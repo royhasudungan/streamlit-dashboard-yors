@@ -361,10 +361,11 @@ elif selected == "🛠️ Top Skills":
 
     st.write(f"⏱️ Loaded & setup in **{(time.time() - start):.2f} seconds**")
     # Filter logic
-    percent_per_skill, skill_order, total_jobs = load_top_skills_summary(job_chosen, type_chosen)
-    st.write(percent_per_skill)
+    top_skills_df, skill_order, total_jobs = load_top_skills_summary(job_chosen, type_chosen)
     st.write(f"⏱️ Loaded data filtered **{(time.time() - start):.2f} seconds**")
+    percent_per_skill = top_skills_df['percent']
 
+    st.write(f"⏱️ filtered2 **{(time.time() - start):.2f} seconds**")
 
     # Bar chart
     colorscale = px.colors.sequential.Tealgrn[::-1]
