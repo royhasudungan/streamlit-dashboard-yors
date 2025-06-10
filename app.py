@@ -103,10 +103,11 @@ elif selected == "🛠️ Top Skills":
 
     st.header("🛠️ Top Skills")
 
-    with st.spinner("Downloading data..."):
-        dataframes = download_data_cached()
-    with st.spinner("Setting up SQLite DB..."):
-        setup_sqlite_db_from_csv(dataframes)
+    if not db_has_required_tables():
+        with st.spinner("Setting up SQLite DB..."):
+            dataframes = download_data_cached()
+            setup_sqlite_db_from_csv(dataframes)
+
     with st.spinner("Loading summary..."):
         df_top10_skills = ensure_summary_exists()
 
