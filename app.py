@@ -419,7 +419,7 @@ elif selected == "🛠️ Top Skills":
         st.write(f"⏱️ Render complete in **{(time.time() - start):.2f} seconds**")
     create_demand_skill_summary()
     test = load_demand_skills()
-    st.write(st);
+    st.write(st)
 
 
 
