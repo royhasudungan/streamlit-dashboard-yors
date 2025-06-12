@@ -418,6 +418,18 @@ elif selected == "🛠️ Top Skills":
         st.write(f"⏱️ Render complete in **{(time.time() - start):.2f} seconds**")
 
 
+        # --- Demand Skills Section ---
+    st.markdown("---")
+    st.markdown("### 📈 In-Demand Skills Over Time")
+
+    # Ensure demand_skill_trend table is created
+    create_demand_skill_summary()
+
+    # Load demand skills data
+    demand_df = load_demand_skills()
+    st.dataframe(demand_df)
+
+
 
 # 📍 Location
 elif selected == "📍 Location":
