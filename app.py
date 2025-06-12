@@ -63,7 +63,6 @@ def ensure_db_and_summary():
         setup_sqlite_db_from_csv(dataframes)
         create_salary_summary()
         create_top_skills_summary()
-        create_demand_skill_summary()
 
 # Cache loading
 @st.cache_data
