@@ -415,15 +415,22 @@ elif selected == "🛠️ Top Skills":
 
 
         # --- Demand Skills Section ---
-    st.markdown("---")
-    st.markdown("### 📈 In-Demand Skills Over Time")
+    try:
+        st.markdown("---")
+        st.markdown("### 📈 In-Demand Skills Over Time")
 
-    # Ensure demand_skill_trend table is created
-    create_demand_skill_summary()
+        st.write("🛠️ Membuat summary tabel skill...")
+        create_demand_skill_summary()
 
-    # Load demand skills data
-    demand_df = load_demand_skills()
-    st.dataframe(demand_df)
+        st.write("📦 Memuat data demand skill...")
+        demand_df = load_demand_skills()
+
+        st.write("✅ Data berhasil dimuat:")
+        st.dataframe(demand_df)
+
+    except Exception as e:
+        st.error(f"❌ Terjadi error: {e}")
+
 
 
 
