@@ -420,6 +420,7 @@ elif selected == "🛠️ Top Skills":
     st.markdown("### 📈 In-Demand Skills Over Time")
 
     demand_df = load_demand_skills()
+    st.write(f"⏱️ Test **{(time.time() - start):.2f} seconds**")
 
 
 
