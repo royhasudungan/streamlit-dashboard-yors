@@ -61,6 +61,9 @@ def ensure_db_and_summary():
     if not db_has_required_tables():
         dataframes = download_data_cached()
         setup_sqlite_db_from_csv(dataframes)
+        create_salary_summary()
+        create_top_skills_summary()
+        create_demand_skill_summary()
 
 # Cache loading
 @st.cache_data
@@ -99,10 +102,7 @@ if selected == "🏠 Introduction":
 # 💰 Salary
 elif selected == "💰 Salary":
     st.header("💰 Salary Analysis")
-
-    # Pastikan tabel summary ada, buat jika belum
-    create_salary_summary()
-
+    
     month_num = {
         1: "January", 2: "February", 3: "March", 4: "April", 5: "May",
         6: "June", 7: "July", 8: "August", 9: "September",
@@ -332,10 +332,6 @@ elif selected == "🛠️ Top Skills":
 
     start = time.time()
     st.header("🛠️ Top Skills")
-
-    # Ensure database & summary table are created
-    create_top_skills_summary()
-    initialize_database()
 
     # UI filters
     job_titles = [
