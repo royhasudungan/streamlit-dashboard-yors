@@ -415,22 +415,17 @@ elif selected == "🛠️ Top Skills":
 
 
         # --- Demand Skills Section ---
-    try:
-        st.markdown("---")
-        st.markdown("### 📈 In-Demand Skills Over Time")
 
-        st.write("🛠️ Membuat summary tabel skill...")
-        create_demand_skill_summary()
+    st.markdown("---")
+    st.markdown("### 📈 In-Demand Skills Over Time")
 
-        st.write("📦 Memuat data demand skill...")
-        demand_df = load_demand_skills()
+    st.write("🛠️ Membuat summary tabel skill...")
+    create_demand_skill_summary()
 
-        st.write("✅ Data berhasil dimuat:")
-        st.dataframe(demand_df)
+    st.write("📦 Memuat data demand skill...")
+    demand_df = load_demand_skills()
 
-    except Exception as e:
-        st.error(f"❌ Terjadi error: {e}")
-        st.stop()  # penting: biar Streamlit tidak lanjut render halaman saat error
+
 
 
 
