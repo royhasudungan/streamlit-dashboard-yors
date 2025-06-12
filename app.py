@@ -8,6 +8,7 @@ from load_data import download_and_load_parquet
 from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary, initialize_database
 from streamlit_option_menu import option_menu
 from preprocess_salary import load_salary_summary, create_salary_summary
+from preprocess_demand_skills import load_demand_skills, create_demand_skill_summary
 
 
 # Styling
@@ -416,6 +417,10 @@ elif selected == "🛠️ Top Skills":
         })
 
         st.write(f"⏱️ Render complete in **{(time.time() - start):.2f} seconds**")
+    create_demand_skill_summary()
+    test = load_demand_skills()
+    st.write(st);
+
 
 
 # 📍 Location
