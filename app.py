@@ -419,6 +419,8 @@ elif selected == "🛠️ Top Skills":
     st.markdown("---")
     st.markdown("### 📈 In-Demand Skills Over Time")
 
+    demand_df = load_demand_skills()
+
 
 
 
