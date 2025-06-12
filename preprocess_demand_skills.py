@@ -29,7 +29,7 @@ def create_demand_skill_summary():
 
 
 @st.cache_data(show_spinner=False)
-def load_demand_skills(job_title_short=None, job_type=None):
+def load_demand_skills():
     conn = sqlite3.connect(DB_PATH)
     query = "SELECT * FROM demand_skill_trend"
 
