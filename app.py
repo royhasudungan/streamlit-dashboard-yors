@@ -426,7 +426,7 @@ elif selected == "🛠️ Top Skills":
         demand_df = load_demand_skills()
 
         st.write("✅ Data berhasil dimuat:")
-        st.dataframe(demand_df)
+        st.write(demand_df)
 
     except Exception as e:
         st.error(f"❌ Terjadi error: {e}")
