@@ -426,10 +426,12 @@ elif selected == "🛠️ Top Skills":
         demand_df = load_demand_skills()
 
         st.write("✅ Data berhasil dimuat:")
-        st.write(demand_df)
+        st.dataframe(demand_df)
 
     except Exception as e:
         st.error(f"❌ Terjadi error: {e}")
+        st.stop()  # penting: biar Streamlit tidak lanjut render halaman saat error
+
 
 
 
