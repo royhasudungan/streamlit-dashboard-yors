@@ -26,13 +26,27 @@ def create_demand_skill_summary():
     conn.close()
 
 
+
 @st.cache_data(show_spinner=False)
 def load_demand_skills(job_title_short=None, job_type=None):
     conn = sqlite3.connect(DB_PATH)
-    query = """
-        SELECT * FROM demand_skill_trend
-    """
-    df = pd.read_sql_query(query, conn)
-    conn.close()
-    return df
+    query = "SELECT * FROM demand_skill_trend"
+    filters = []
+    params = []
 
+    if job_title_short:
+        filters.append("job_title_short = ?")
+        params.append(job_title_short)
+
+    if job_type:
+        filters.append("job_schedule_type= ?")
+        params.append(job_type)
+
+    if filters:
+        query += " WHERE " + " AND ".join(filters)
+
+    df = pd.read_sql_query(query, conn, params=params)
+    conn.close()
+
+    df['job_posted_date'] = pd.to_datetime(df['job_posted_date'])
+    return df
