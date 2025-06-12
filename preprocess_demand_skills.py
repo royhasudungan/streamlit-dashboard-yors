@@ -34,6 +34,5 @@ def load_demand_skills():
     query = "SELECT * FROM demand_skill_trend"
 
     df = pd.read_sql_query(query, conn)
-    st.write(df)
     conn.close()
     return df

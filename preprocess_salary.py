@@ -39,4 +39,5 @@ def load_salary_summary(month=None):
         """
         df = pd.read_sql_query(query, conn, params=(month,))
     conn.close()
+    st.dataframe(df)
     return df
