@@ -16,7 +16,7 @@ def create_demand_skill_summary():
             j.job_title,
             j.job_title_short,
             j.job_posted_date,
-            j.job_schedule_type
+            j.job_schedule_type,
             s.skills
         FROM skills_job_dim sj
         JOIN job_postings_fact j ON sj.job_id = j.job_id
