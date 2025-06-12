@@ -30,7 +30,7 @@ def create_demand_skill_summary():
 def load_demand_skills(job_title_short=None, job_type=None):
     conn = sqlite3.connect(DB_PATH)
     query = """
-        SELECT * FROM TABLE demand_skill_trend
+        SELECT * FROM demand_skill_trend
     """
     df = pd.read_sql_query(query, conn)
     conn.close()
