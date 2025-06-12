@@ -59,7 +59,6 @@ def db_has_required_tables():
 
 def ensure_db_and_summary():
     if not db_has_required_tables():
-        st.warning("Database incomplete. Reloading from Parquet...")
         dataframes = download_data_cached()
         setup_sqlite_db_from_csv(dataframes)
 
@@ -417,9 +416,6 @@ elif selected == "🛠️ Top Skills":
         })
 
         st.write(f"⏱️ Render complete in **{(time.time() - start):.2f} seconds**")
-    create_demand_skill_summary()
-    test = load_demand_skills()
-    st.write(test)
 
 
 
