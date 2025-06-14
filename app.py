@@ -226,6 +226,8 @@ if selected == "🏠 Introduction":
     col11, col12  = st.columns([1,1])
     skill_dist_df = load_skill_type_distribution()
     country_df = load_job_country()
+    st.write(skill_dist_df)
+    st.write(country_df)
 
     with col11:
         # Mapping label format
