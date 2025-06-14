@@ -12,6 +12,7 @@ from preprocess_demand_skills import load_demand_skills, create_demand_skill_sum
 from preprocess_location import create_job_country_summary, load_job_country_summary
 from preprocess_introduction import create_all_intro_summaries, load_job_country, load_job_summary_stats,load_skill_type_distribution,load_top_job_title_summary
 import pydeck as pdk
+import os
 
 
 # Styling
