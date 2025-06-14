@@ -52,13 +52,28 @@ def setup_sqlite_db_from_csv(dataframes):
     conn.close()
 
 def db_has_required_tables():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-    tables = set(row[0] for row in cursor.fetchall())
-    conn.close()
-    required = {'job_postings_fact', 'skills_dim', 'skills_job_dim'}
-    return required.issubset(tables)
+    if not os.path.exists(DB_PATH):
+        print(f"Database file not found at {DB_PATH}")
+        return False
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = {row[0] for row in cursor.fetchall()}
+        conn.close()
+
+        required_tables = {
+            "top_10_skills_summary",
+            "skill_type_distribution_summary",
+            "job_country_summary",
+            "top_job_titles_summary"
+        }
+
+        return required_tables.issubset(tables)
+    except Exception as e:
+        print(f"Error checking DB tables: {e}")
+        return False
 
 def ensure_db_and_summary():
     if not db_has_required_tables():
