@@ -1,5 +1,6 @@
 import sqlite3
 import streamlit as st
+import pandas as pd
 
 DB_PATH = 'jobs_skills.db'
 
