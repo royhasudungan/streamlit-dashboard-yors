@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from load_data import download_and_load_parquet
-from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary, initialize_database
+from preprocess_top_skills import load_top_skills_summary,create_top_skills_summary
 from streamlit_option_menu import option_menu
 from preprocess_salary import load_salary_summary, create_salary_summary
 from preprocess_demand_skills import load_demand_skills, create_demand_skill_summary
@@ -421,7 +421,7 @@ elif selected == "🛠️ Top Skills":
 
     start2 = time.time()
 
-    demand_df = load_top_skills_summary()
+    demand_df = load_demand_skills()
     st.write(f"⏱️ Test **{(time.time() - start2):.2f} seconds**")
 
 
