@@ -10,6 +10,7 @@ from streamlit_option_menu import option_menu
 from preprocess_salary import load_salary_summary, create_salary_summary
 from preprocess_demand_skills import load_demand_skills, create_demand_skill_summary
 from preprocess_location import create_job_country_summary, load_job_country_summary
+import pydeck as pdk
 
 
 # Styling
