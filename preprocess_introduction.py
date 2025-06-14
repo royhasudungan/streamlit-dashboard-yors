@@ -23,9 +23,12 @@ def create_all_intro_summaries():
     cursor.execute("DROP TABLE IF EXISTS skill_type_distribution_summary")
     cursor.execute("""
         CREATE TABLE skill_type_distribution_summary AS
-        SELECT type, COUNT(DISTINCT job_title) AS count
-        FROM top_10_demanded_skills
-        GROUP BY type
+        SELECT s.type AS skill_type, COUNT(DISTINCT j.job_title) AS job_title_count
+        FROM skills_job_dim sj
+        JOIN skills_dim s ON sj.skill_id = s.skill_id
+        JOIN job_postings_fact j ON sj.job_id = j.job_id
+        WHERE s.type IS NOT NULL
+        GROUP BY s.type
     """)
 
     # 3. Job Country Distribution
