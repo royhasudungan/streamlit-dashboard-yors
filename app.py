@@ -130,13 +130,6 @@ if selected == "🏠 Introduction":
     col1, col3, col2 = st.columns([5, 0.1, 2])
 
     with col1:
-        top_jobs = (
-            top_jobs_df.groupby('job_title_short')['job_id']
-            .nunique()
-            .sort_values(ascending=False)
-            .head(5)
-            .reset_index(name='Count')
-        )
 
         # Gradasi warna manual
         gradient_colors = [
@@ -150,12 +143,12 @@ if selected == "🏠 Introduction":
         # Buat figure
         fig = go.Figure()
 
-        for i, row in top_jobs.iterrows():
+        for i, row in top_jobs_df.iterrows():
             fig.add_trace(go.Bar(
                 x=[row['job_title_short']],
-                y=[row['Count']],
+                y=[row['count']],
                 marker=dict(color=gradient_colors[i]),
-                hovertemplate=f"{row['job_title_short']}<br>Count: {row['Count']} Jobs<extra></extra>",
+                hovertemplate=f"{row['job_title_short']}<br>Count: {row['count']} Jobs<extra></extra>",
                 showlegend=False
             ))
 
