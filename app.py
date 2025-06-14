@@ -419,10 +419,114 @@ elif selected == "🛠️ Top Skills":
     st.markdown("---")
     st.markdown("### 📈 In-Demand Skills Over Time")
 
+
     start2 = time.time()
 
-    demand_df = load_demand_skills()
+    create_demand_skill_summary()
+
+    job_titles2 = [
+        "Select All", "Business Analyst", "Cloud Engineer", "Data Analyst", "Data Engineer",
+        "Data Scientist", "Machine Learning Engineer", "Senior Data Analyst",
+        "Senior Data Engineer", "Senior Data Scientist", "Software Engineer"
+    ]
+
+    job_schedule_types = [
+        "Select All", "Full-time", "Internship",
+        "Contractor", "Part-Time", "Temp work"
+    ]
+
+    selected_title = st.selectbox("Pilih Job Title", options=job_titles2, index=0)
+    selected_schedule = st.selectbox("Pilih Job Schedule Type", options=job_schedule_types, index=0)
+
+    job_chosen2 = None if selected_title == "Select All" else selected_title
+    schedule_chosen2 = None if selected_schedule == "Select All" else selected_schedule
+
+    df = load_demand_skills(job_chosen2, schedule_chosen2)
+    top5_skills = df['skills'].unique()
+
+    # Buat line chart per skill
+    fig = go.Figure()
+    for skill in top5_skills:
+        df_skill = df[df['skills'] == skill]
+        fig.add_trace(go.Scatter(
+            x=df_skill['job_posted_date'],
+            y=df_skill['count'],
+            mode='lines',
+            name=skill
+            
+    ))
+
+
+    min_date = df['job_posted_date'].min()
+    max_date = df['job_posted_date'].max()
+
+    fig.update_layout(
+        title=dict(
+            text="Top 5 Trend Skills in Demand by Time Series",
+            x=0.5,
+            xanchor='center',
+            font=dict(size=15, color='white')
+        ),
+        xaxis_title='',
+        yaxis_title='',
+        hoverdistance=100,
+        hovermode='x unified',
+        hoverlabel=dict(
+            bgcolor='black',
+            bordercolor='white',
+            font_size=14,
+            font_color='white'
+        ),
+        dragmode='pan',
+        xaxis=dict(
+            range=[min_date, max_date],
+            minallowed=min_date,
+            maxallowed=max_date,
+            type='date',
+            fixedrange=False,
+            constrain='range',
+            rangeslider=dict(visible=True, thickness=0.0),
+            showspikes=True,
+            spikemode='across',
+            spikesnap='cursor',
+            spikecolor='rgba(255, 255, 255, 0.4)',
+            spikethickness=0.05,
+            showline=True,
+            showgrid=True,
+            linecolor='white',
+            gridcolor='rgba(255,255,255,0.1)',
+            zeroline=False
+        ),
+
+
+        yaxis=dict(
+            showspikes=False,
+            spikemode='across',
+            spikesnap='cursor',
+            showline=True,
+            showgrid=True,
+            linecolor='white',
+            gridcolor='rgba(255,255,255,0.1)',
+            zeroline=False
+        ),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='white'),
+        margin=dict(l=40, r=40, t=60, b=40)
+    )
+
+    # Tampilkan di Streamlit
+    st.plotly_chart(fig, use_container_width=True, config={
+        'scrollZoom': True,  # zoom dengan scroll mouse aktif
+        'displayModeBar': True,
+        'displaylogo': False,
+        'modeBarButtons': [
+            ['pan2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d']
+        ],
+    })
+
     st.write(f"⏱️ Test **{(time.time() - start2):.2f} seconds**")
+
 
 
 
