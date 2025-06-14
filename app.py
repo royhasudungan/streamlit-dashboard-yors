@@ -421,7 +421,7 @@ elif selected == "🛠️ Top Skills":
 
     start2 = time.time()
 
-    demand_df = load_demand_skills()
+    demand_df = load_top_skills_summary()
     st.write(f"⏱️ Test **{(time.time() - start2):.2f} seconds**")
 
 
