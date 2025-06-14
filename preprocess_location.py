@@ -12,23 +12,26 @@ def create_job_country_summary():
     # Hapus jika tabel sudah ada
     cursor.execute("DROP TABLE IF EXISTS job_country_summary")
 
-    # Filter negara tidak valid
+    # Negara yang akan dikecualikan
     invalid_countries = ("Remote", "Worldwide", "Europe", "Asia", "Africa", "", None)
+    valid_exclusions = [c for c in invalid_countries if c not in (None, '')]
+    placeholders = ",".join("?" for _ in valid_exclusions)
 
-    # Buat tabel dengan jumlah pekerjaan per negara
-    cursor.execute("""
+    query = f"""
         CREATE TABLE job_country_summary AS
         SELECT 
             job_country AS country,
             COUNT(*) AS job_count
         FROM job_postings_fact
-        WHERE job_country NOT IN (?, ?, ?, ?, ?, '')
-           AND job_country IS NOT NULL
+        WHERE job_country NOT IN ({placeholders})
+          AND job_country IS NOT NULL
         GROUP BY job_country
-    """, invalid_countries[:-1])  # Tanpa elemen terakhir (None)
+    """
 
+    cursor.execute(query, valid_exclusions)
     conn.commit()
     conn.close()
+
 
 @st.cache_data(show_spinner=False)
 def load_job_country_summary():
