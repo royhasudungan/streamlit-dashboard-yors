@@ -10,6 +10,7 @@ from streamlit_option_menu import option_menu
 from preprocess_salary import load_salary_summary, create_salary_summary
 from preprocess_demand_skills import load_demand_skills, create_demand_skill_summary
 from preprocess_location import create_job_country_summary, load_job_country_summary
+from preprocess_introduction import create_all_intro_summaries, load_job_country, load_job_summary_stats,load_skill_type_distribution,load_top_job_title_summary
 import pydeck as pdk
 
 
@@ -100,6 +101,232 @@ with st.sidebar:
 # 🏠 Introduction
 if selected == "🏠 Introduction":
     st.title("💼 IT Job Market Explorer 2023")
+    create_all_intro_summaries()
+
+    top_jobs_df = load_top_job_title_summary()
+    summary_stats = load_job_summary_stats()
+
+
+    total_jobs = summary_stats["total_jobs"].iloc[0]
+    avg_salary = summary_stats["avg_salary"].iloc[0]
+
+    # Layout dua kolom
+    col1, col3, col2 = st.columns([5, 0.1, 2])
+
+    with col1:
+        top_jobs = (
+            top_jobs_df.groupby('job_title_short')['job_id']
+            .nunique()
+            .sort_values(ascending=False)
+            .head(5)
+            .reset_index(name='Count')
+        )
+
+        # Gradasi warna manual
+        gradient_colors = [
+            'rgba(173, 216, 230, 0.9)',  # light blue
+            'rgba(135, 206, 250, 0.9)',
+            'rgba(100, 149, 237, 0.9)',
+            'rgba(70, 130, 180, 0.9)',
+            'rgba(65, 105, 225, 0.9)'   # royal blue
+        ]
+
+        # Buat figure
+        fig = go.Figure()
+
+        for i, row in top_jobs.iterrows():
+            fig.add_trace(go.Bar(
+                x=[row['job_title_short']],
+                y=[row['Count']],
+                marker=dict(color=gradient_colors[i]),
+                hovertemplate=f"{row['job_title_short']}<br>Count: {row['Count']} Jobs<extra></extra>",
+                showlegend=False
+            ))
+
+        fig.update_layout(
+            hoverlabel=dict(
+                bgcolor='#16213e',
+                bordercolor='white',
+                font=dict(color='white', size=20),
+            ),
+            title= dict(
+                text='Top 5 Most In-Demand Data IT Job Roles',
+                x=0.5,
+                xanchor='center',
+                font=dict(size=25, color='white')
+            ),
+            xaxis=dict(
+                title='', 
+                showline=False, 
+                showticklabels=True, 
+                showgrid=False,
+                tickfont=dict(size=20)
+            ),
+            yaxis=dict(
+                visible=False  # Ini matiin semua tampilan sumbu Y
+            ),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            margin=dict(l=20, r=20, t=80, b=40)
+        )
+
+        # Hapus toolbar dan disable zoom
+        config = {
+            "displayModeBar": False,
+            "scrollZoom": False
+        }
+
+        st.plotly_chart(fig, use_container_width=True, config=config)
+
+    with col2:
+        st.markdown(f"""
+        <div style="
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 2rem;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            margin-bottom: 1.5rem;
+        ">
+            <h3 style="margin-bottom: 0.5rem;">🏢 Total Jobs</h3>
+            <div style="font-size: 2rem; font-weight: 600;">{total_jobs:,} post</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div style="
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            padding: 2rem;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.15);
+            margin-bottom: 1.5rem;
+        ">
+            <h3 style="margin-bottom: 0.5rem;">💰 Average Salary (USD)</h3>
+            <div style="font-size: 2rem; font-weight: 600;">${avg_salary:,.0f}</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col3:
+        st.markdown("""
+        <div style="height: 100%; border-left: 2px solid #ccc;"></div>
+    """, unsafe_allow_html=True)
+        
+
+    col11, col12  = st.columns([1,1])
+    skill_dist_df = load_skill_type_distribution()
+    country_df = load_job_country_summary()
+
+    with col11:
+        # Mapping label format
+        def format_label(option):
+            return {
+                "databases": "Databases",
+                "analyst_tools": "Tools",
+                "programming": "Languages",
+                "webframeworks": "Frameworks",
+                "cloud": "Cloud",
+                "os": "OS",
+                "sync": "Sync",
+                "async": "Async",
+                "other": "Other"
+            }.get(option, option)
+
+        # Hitung distribusi skill type (tanpa filter)
+        type_distribution = (
+            skill_dist_df.groupby("type")["job_title"]
+            .nunique()
+            .sort_values(ascending=False)
+        )
+
+        # Format labels
+        formatted_labels = [format_label(t) for t in type_distribution.index]
+
+        # Hitung persentase
+        type_percent = (type_distribution / type_distribution.sum() * 100).round(2)
+
+        # Pie Chart
+        fig = go.Figure(data=[go.Pie(
+            labels=formatted_labels,
+            values=type_percent.values,
+            hole=0.45,
+            textinfo='label',
+            showlegend=False,
+            hovertemplate="<b>%{label}</b><br>📊 Required in %{value:.2f}% of postings<extra></extra>",
+            marker=dict(colors=px.colors.qualitative.Set3)
+        )])
+
+        fig.update_layout(
+            title= dict(
+                text='Skill Type Distribution by Percentage',
+                x=0.5,
+                xanchor='center',
+                font=dict(size=25, color='white')
+            ),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white', size=15),
+            margin=dict(t=40, b=40, l=20, r=20),
+            hoverlabel=dict(
+                bgcolor='#16213e',
+                bordercolor='white',
+                font=dict(color='white', size=20),
+            ),
+            
+            
+        )
+
+        # Show it
+        st.plotly_chart(fig, use_container_width=True, config={
+            'displayModeBar': False,
+            'displaylogo': False
+        })
+    
+    with col12 :
+
+        # Hitung jumlah lokasi unik
+        n_locations = country_df['job_country'].nunique()
+
+        # Hitung jumlah job per country, urut dari terbesar
+        job_counts = country_df['job_country'].value_counts()
+
+
+        # Buat bar chart
+        fig = go.Figure(go.Bar(
+            x=job_counts.index,
+            y=job_counts.values,
+            marker_color='royalblue',
+            hovertemplate='%{x}<br>Jobs: %{y}<extra></extra>'
+        ))
+
+        fig.update_layout(
+            title= dict(
+                text='🌍 Job Locations<br><span style="font-size:16px;">Total: <b>' + str(n_locations) + ' locations</b></span>',
+                x=0.5,
+                xanchor='center',
+                font=dict(size=25, color='white')
+            ),
+            xaxis_title="",
+            yaxis_title="Number of Jobs",
+            font=dict(color='white', size=18),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            margin=dict(t=40, b=40, l=40, r=40),
+            hoverlabel=dict(
+                bgcolor='#16213e',
+                bordercolor='white',
+                font=dict(color='white', size=20),
+            ),
+            hoverdistance=100
+        )
+
+        st.plotly_chart(fig, use_container_width=True, config={
+            'displayModeBar': False,
+            'displaylogo': False
+        })
+
+
 
 # 💰 Salary
 elif selected == "💰 Salary":
