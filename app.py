@@ -97,7 +97,7 @@ with st.sidebar:
     selected = option_menu(
         menu_title="",
         options=["🏠 Introduction", "💰 Salary", "🛠️ Top Skills", "📍 Location"],
-        default_index=0,
+        default_index=1,
         styles={
             "container": {"background-color": "transparent"},
             "icon": {"color": "transparent", "font-size": "20px"},
