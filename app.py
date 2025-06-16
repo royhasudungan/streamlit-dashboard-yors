@@ -119,6 +119,7 @@ with st.sidebar:
 # 🏠 Introduction
 if selected == "🏠 Introduction":
     st.title("💼 IT Job Market Explorer 2023")
+    st.markdown("---")
 
     top_jobs_df = load_top_job_title_summary()
     summary_stats = load_job_summary_stats()
