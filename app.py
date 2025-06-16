@@ -83,6 +83,8 @@ def ensure_db_and_summary():
         create_salary_summary()
         create_top_skills_summary()
         create_demand_skill_summary()
+        create_all_intro_summaries()
+        create_job_country_summary()
 
 # Cache loading
 @st.cache_data
@@ -97,7 +99,7 @@ with st.sidebar:
     selected = option_menu(
         menu_title="",
         options=["🏠 Introduction", "💰 Salary", "🛠️ Top Skills", "📍 Location"],
-        default_index=1,
+        default_index=0,
         styles={
             "container": {"background-color": "transparent"},
             "icon": {"color": "transparent", "font-size": "20px"},
@@ -117,7 +119,6 @@ with st.sidebar:
 # 🏠 Introduction
 if selected == "🏠 Introduction":
     st.title("💼 IT Job Market Explorer 2023")
-    create_all_intro_summaries()
 
     top_jobs_df = load_top_job_title_summary()
     summary_stats = load_job_summary_stats()
@@ -299,7 +300,7 @@ if selected == "🏠 Introduction":
         n_locations = country_df['job_country'].nunique()
 
         # Hitung jumlah job per country, urut dari terbesar
-        job_counts = country_df.set_index('job_country')['count'].sort_values(ascending=False)
+        job_counts = country_df.set_index('job_country')['count'].sort_values(ascending=False).head(20)
 
 
         # Buat bar chart
@@ -312,7 +313,7 @@ if selected == "🏠 Introduction":
 
         fig.update_layout(
             title= dict(
-                text='🌍 Job Locations<br><span style="font-size:16px;">Total: <b>' + str(n_locations) + ' locations</b></span>',
+                text='🌍 Job Locations<br><span style="font-size:16px;"',
                 x=0.5,
                 xanchor='center',
                 font=dict(size=25, color='white')
@@ -335,6 +336,92 @@ if selected == "🏠 Introduction":
             'displayModeBar': False,
             'displaylogo': False
         })
+    
+    st.markdown("---")
+    # Journey Steps
+    st.markdown("## 🗺️ Your Exploration Journey")
+    
+    # Create better spacing for journey steps
+    step1, step2, step3 = st.columns(3)
+    
+    with step1:
+        st.markdown("""
+        <div style="background: #f8fafc; 
+                    padding: 1.5rem; 
+                    border-radius: 12px; 
+                    text-align: center;
+                    border: 2px solid #e2e8f0;
+                    height: 180px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">📍</div>
+            <h4 style="color: #667eea; margin-bottom: 0.5rem;">Explore</h4>
+            <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">
+                Navigate through different sections using the sidebar
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with step2:
+        st.markdown("""
+        <div style="background: #f8fafc; 
+                    padding: 1.5rem; 
+                    border-radius: 12px; 
+                    text-align: center;
+                    border: 2px solid #e2e8f0;
+                    height: 180px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">🔍</div>
+            <h4 style="color: #667eea; margin-bottom: 0.5rem;">Analyze</h4>
+            <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">
+                Dive deep into salary trends and market insights
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with step3:
+        st.markdown("""
+        <div style="background: #f8fafc; 
+                    padding: 1.5rem; 
+                    border-radius: 12px; 
+                    text-align: center;
+                    border: 2px solid #e2e8f0;
+                    height: 180px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">🎯</div>
+            <h4 style="color: #667eea; margin-bottom: 0.5rem;">Decide</h4>
+            <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">
+                Make informed career decisions with data
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Call to Action
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 2.5rem; 
+                border-radius: 12px; 
+                text-align: center; 
+                color: white; 
+                margin: 2rem 0;">
+        <h3 style="margin-bottom: 1rem; font-weight: 300;">Ready to Shape Your Future? 🚀</h3>
+        <p style="font-size: 1.1rem; margin-bottom: 1.5rem; opacity: 0.95;">
+            Use the sidebar to navigate through detailed analytics and uncover the opportunities that await you in the IT industry
+        </p>
+        <div style="background: rgba(255,255,255,0.2); 
+                    padding: 0.8rem 2rem; 
+                    border-radius: 25px; 
+                    display: inline-block; 
+                    backdrop-filter: blur(10px);">
+            ✨ Start exploring now and discover your next career move!
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 
@@ -773,7 +860,6 @@ elif selected == "📍 Location":
     st.header("🌍 Job Openings by Country")
     st.markdown("This map shows the distribution of job vacancies across countries from the dataset.")
 
-    create_job_country_summary()
     country_counts = load_job_country_summary()
 
     # Koordinat negara (sementara hardcoded)
