@@ -161,7 +161,7 @@ if selected == "🏠 Introduction":
                 font=dict(color='white', size=20),
             ),
             title= dict(
-                text='Top 5 Most In-Demand Data IT Job Roles',
+                text='Top 5 Most In-Demand <br> Data IT Job Roles',
                 x=0.5,
                 xanchor='center',
                 font=dict(size=25, color='white')
