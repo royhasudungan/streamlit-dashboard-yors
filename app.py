@@ -122,6 +122,7 @@ if selected == "🏠 Introduction":
 
     top_jobs_df = load_top_job_title_summary()
     summary_stats = load_job_summary_stats()
+    
 
 
     total_jobs = summary_stats["total_jobs"].iloc[0]
@@ -227,6 +228,10 @@ if selected == "🏠 Introduction":
     col11, col12  = st.columns([1,1])
     skill_dist_df = load_skill_type_distribution()
     country_df = load_job_country()
+
+    st.write(country_df.head())
+    st.write(country_df.columns)
+
 
     with col11:
         # Mapping label format
