@@ -247,9 +247,10 @@ if selected == "🏠 Introduction":
         # Hitung distribusi skill type (tanpa filter)
         type_distribution = (
             skill_dist_df.groupby("skill_type")["job_title_count"]
-            .nunique()
+            .sum()
             .sort_values(ascending=False)
         )
+
 
         # Format labels
         formatted_labels = [format_label(t) for t in type_distribution.index]
