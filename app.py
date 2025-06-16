@@ -747,8 +747,6 @@ elif selected == "🛠️ Top Skills":
 
     start2 = time.time()
 
-    create_demand_skill_summary()
-
     job_titles2 = [
         "Select All", "Business Analyst", "Cloud Engineer", "Data Analyst", "Data Engineer",
         "Data Scientist", "Machine Learning Engineer", "Senior Data Analyst",
