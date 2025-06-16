@@ -129,7 +129,7 @@ if selected == "🏠 Introduction":
     avg_salary = summary_stats["avg_salary"].iloc[0]
 
     # Layout dua kolom
-    col1,col2 = st.columns([9,4])
+    col1,col2 = st.columns([1,1])
 
     with col1:
 
@@ -219,10 +219,6 @@ if selected == "🏠 Introduction":
             <div style="font-size: 2rem; font-weight: 600;">${avg_salary:,.0f}</div>
         </div>
         """, unsafe_allow_html=True)
-    with col3:
-        st.markdown("""
-        <div style="height: 100%; border-left: 2px solid #ccc;"></div>
-    """, unsafe_allow_html=True)
         
 
     col11, col12  = st.columns([1,1])
