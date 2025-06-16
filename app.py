@@ -229,9 +229,6 @@ if selected == "🏠 Introduction":
     skill_dist_df = load_skill_type_distribution()
     country_df = load_job_country()
 
-    st.write(country_df.head())
-    st.write(country_df.columns)
-
 
     with col11:
         # Mapping label format
@@ -305,7 +302,7 @@ if selected == "🏠 Introduction":
         n_locations = country_df['country'].nunique()
 
         # Hitung jumlah job per country, urut dari terbesar
-        job_counts = country_df.set_index('country')['count'].sort_values(ascending=False).head(20)
+        job_counts = country_df.set_index('country')['job_count'].sort_values(ascending=False).head(20)
 
 
         # Buat bar chart
