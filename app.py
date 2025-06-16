@@ -225,7 +225,7 @@ if selected == "🏠 Introduction":
     """, unsafe_allow_html=True)
         
 
-    col11, col12  = st.columns([1,1])
+    col11, col12  = st.columns([5,4])
     skill_dist_df = load_skill_type_distribution()
     country_df = load_job_country()
 
