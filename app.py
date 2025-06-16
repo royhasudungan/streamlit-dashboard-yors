@@ -129,7 +129,7 @@ if selected == "🏠 Introduction":
     avg_salary = summary_stats["avg_salary"].iloc[0]
 
     # Layout dua kolom
-    col1, col3, col2 = st.columns([9,4])
+    col1,col2 = st.columns([9,4])
 
     with col1:
 
