@@ -302,7 +302,7 @@ if selected == "🏠 Introduction":
         n_locations = country_df['country'].nunique()
 
         # Hitung jumlah job per country, urut dari terbesar
-        job_counts = country_df.set_index('country')['job_count'].sort_values(ascending=False).head(20)
+        job_counts = country_df.set_index('country')['job_count'].sort_values(ascending=False).head(10)
 
 
         # Buat bar chart
@@ -315,7 +315,7 @@ if selected == "🏠 Introduction":
 
         fig.update_layout(
             title= dict(
-                text='🌍 Job Locations<br><span style="font-size:16px;"',
+                text='🌍 Job Locations',
                 x=0.5,
                 xanchor='center',
                 font=dict(size=25, color='white')
