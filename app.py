@@ -225,7 +225,7 @@ if selected == "🏠 Introduction":
     """, unsafe_allow_html=True)
         
 
-    col11, col12  = st.columns([5,4])
+    col11, col12  = st.columns([1,1])
     skill_dist_df = load_skill_type_distribution()
     country_df = load_job_country()
 
@@ -280,7 +280,7 @@ if selected == "🏠 Introduction":
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='white', size=15),
-            margin=dict(t=40, b=40, l=20, r=20),
+            margin=dict(t=40, b=40, l=20, r=60),
             hoverlabel=dict(
                 bgcolor='#16213e',
                 bordercolor='white',
