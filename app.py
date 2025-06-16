@@ -272,7 +272,7 @@ if selected == "🏠 Introduction":
 
         fig.update_layout(
             title= dict(
-                text='Skill Type Distribution by Percentage',
+                text='Skill Type Distribution <br> by Percentage',
                 x=0.5,
                 xanchor='center',
                 font=dict(size=25, color='white')
@@ -280,7 +280,7 @@ if selected == "🏠 Introduction":
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='white', size=15),
-            margin=dict(t=40, b=40, l=20, r=60),
+            margin=dict(t=40, b=40, l=20, r=70),
             hoverlabel=dict(
                 bgcolor='#16213e',
                 bordercolor='white',
